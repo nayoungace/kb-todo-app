@@ -12,6 +12,12 @@
       "rules": {
         "react/only-export-components": "off"
       }
+    },
+    {
+      "files": ["src/shared/shadcn/**"],
+      "rules": {
+        "react/only-export-components": "off"
+      }
     }
   ]
 }
