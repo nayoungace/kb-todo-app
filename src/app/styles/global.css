@@ -1,0 +1,55 @@
+@import 'tailwindcss';
+
+/* 과제 요구 폰트. 한글 사용량이 많아 dynamic-subset(필요한 서브셋만 지연 로드)을 선택했다. */
+@import 'pretendard/dist/web/variable/pretendardvariable-dynamic-subset.css';
+
+/**
+ * 색상 토큰 (과제 요구사항: "색상은 토큰으로 관리되어야 합니다")
+ *
+ * 팔레트(raw)를 직접 쓰지 않고 의미 기반(semantic) 이름만 컴포넌트에 노출한다.
+ * Tailwind v4의 @theme 은 여기 정의한 CSS 변수를 그대로 유틸리티로 만들어 주므로
+ * `--color-primary` → `bg-primary` / `text-primary` / `border-primary` 로 사용한다.
+ */
+@theme {
+  /* Brand */
+  --color-primary: oklch(0.55 0.19 258);
+  --color-primary-hover: oklch(0.48 0.19 258);
+  --color-primary-subtle: oklch(0.95 0.03 258);
+  --color-on-primary: oklch(1 0 0);
+
+  /* State */
+  --color-disabled: oklch(0.87 0.005 260);
+  --color-on-disabled: oklch(0.62 0.01 260);
+  --color-danger: oklch(0.58 0.21 25);
+  --color-danger-hover: oklch(0.51 0.21 25);
+  --color-success: oklch(0.65 0.17 155);
+
+  /* Surface / Text / Border */
+  --color-background: oklch(0.98 0.002 260);
+  --color-surface: oklch(1 0 0);
+  --color-surface-subtle: oklch(0.96 0.003 260);
+  --color-border: oklch(0.9 0.004 260);
+  --color-text: oklch(0.25 0.01 260);
+  --color-text-muted: oklch(0.55 0.01 260);
+
+  /* Typography */
+  --font-sans:
+    'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, system-ui, Roboto,
+    'Helvetica Neue', 'Segoe UI', 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', sans-serif;
+}
+
+@layer base {
+  html {
+    /* 인앱 브라우저(webview)에서 가로 모드 전환 시 폰트가 확대되는 현상 방지 */
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    @apply bg-background text-text font-sans antialiased;
+  }
+
+  /* 키보드 사용자에게만 포커스 링을 노출한다 (WCAG 2.4.7) */
+  :focus-visible {
+    @apply outline-primary outline-2 outline-offset-2;
+  }
+}
