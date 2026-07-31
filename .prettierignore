@@ -2,4 +2,8 @@ dist
 node_modules
 pnpm-lock.yaml
 public/mockServiceWorker.js
+docs
+
+# 생성물
 src/routeTree.gen.ts
+src/shared/shadcn
