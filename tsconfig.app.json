@@ -24,7 +24,7 @@
     "erasableSyntaxOnly": true,
     "noFallthroughCasesInSwitch": true,
 
-    /* FSD 레이어 절대경로 import (TS 6 부터 baseUrl 은 deprecated 이므로 paths 만 사용) */
+    /* Paths */
     "paths": {
       "@/*": ["./src/*"]
     }

@@ -6,10 +6,6 @@ import { queryClient } from './query-client'
 import { router } from './router'
 import './styles/global.css'
 
-/**
- * MSW 는 개발/테스트 환경에서만 기동하며, 워커가 요청을 가로챌 준비를 마친 뒤 렌더한다.
- * (핸들러 등록 전에 렌더하면 초기 쿼리가 실제 네트워크로 새어나간다)
- */
 async function enableMocking() {
   if (!import.meta.env.DEV) return
 
