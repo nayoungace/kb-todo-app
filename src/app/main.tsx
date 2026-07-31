@@ -2,6 +2,7 @@ import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { QueryClientProvider } from '@tanstack/react-query'
 import { RouterProvider } from '@tanstack/react-router'
+import { bootstrapSession } from '@/entities/session'
 import { queryClient } from './query-client'
 import { router } from './router'
 import './styles/global.css'
@@ -20,6 +21,8 @@ if (!rootElement) {
 }
 
 void enableMocking().then(() => {
+  void bootstrapSession()
+
   createRoot(rootElement).render(
     <StrictMode>
       <QueryClientProvider client={queryClient}>

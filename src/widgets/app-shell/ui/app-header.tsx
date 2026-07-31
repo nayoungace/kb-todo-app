@@ -1,6 +1,6 @@
 import { Link } from '@tanstack/react-router'
+import { useSession } from '@/entities/session'
 import { getAuthNavItem, NAV_MAIN } from '@/shared/config/navigation'
-import { useSession } from '@/shared/config/session'
 import { Button } from '@/shared/shadcn/ui/button'
 import { SidebarTrigger } from '@/shared/shadcn/ui/sidebar'
 
