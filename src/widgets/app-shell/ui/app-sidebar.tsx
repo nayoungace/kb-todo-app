@@ -1,7 +1,7 @@
 import { Link, useMatchRoute } from '@tanstack/react-router'
+import { useSession } from '@/entities/session'
 import { getAuthNavItem, NAV_MAIN } from '@/shared/config/navigation'
 import { ROUTES } from '@/shared/config/routes'
-import { useSession } from '@/shared/config/session'
 import {
   Sidebar,
   SidebarContent,
