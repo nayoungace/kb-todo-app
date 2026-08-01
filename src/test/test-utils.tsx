@@ -5,6 +5,9 @@ import { SEED_ACCOUNT } from '@/mocks/data/db'
 import { createFakeJwt } from '@/mocks/lib/jwt'
 import { tokenStore } from '@/shared/api'
 
+/** `mocks/` 는 레이어 밖이므로 테스트는 목 내부 대신 이 재노출을 참조한다. */
+export const TEST_ACCOUNT = SEED_ACCOUNT
+
 /**
  * gcTime 을 0 으로 두지 말 것. 옵저버가 잠깐 비는 사이 무한 쿼리의 누적 페이지가
  * 수거되어 fetchNextPage 결과가 사라진다. 테스트 간 격리는 매 테스트마다 새 인스턴스를
