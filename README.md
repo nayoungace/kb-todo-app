@@ -8,13 +8,15 @@ Github [@nayoungace](https://github.com/nayoungace/) 유저의 프론트엔드 �
 pnpm install
 pnpm dev          # 개발 서버 (MSW 목 서버 자동 기동)
 pnpm build        # 타입 체크 + 프로덕션 빌드
-pnpm preview      # 빌드 결과 미리보기
+pnpm preview      # 빌드 결과 미리보기 (여기서도 MSW 가 기동한다)
 pnpm test         # 단위/통합 테스트 (Vitest)
 pnpm lint         # oxlint
 pnpm format       # prettier
 ```
 
 Node 20 이상, 패키지 매니저는 pnpm(`packageManager` 필드에 고정).
+
+로그인 계정은 `test@kb.co.kr` / `password123` 이다. 실제 백엔드가 없으므로 MSW 를 `dev` 뿐 아니라 **프로덕션 빌드에서도 기동**한다. `pnpm build && pnpm preview` 로 띄운 결과물에서도 모든 화면이 그대로 동작한다.
 
 ## 기술 선택
 
