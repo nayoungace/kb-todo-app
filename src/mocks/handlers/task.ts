@@ -28,22 +28,22 @@ export const taskHandlers = [
     return HttpResponse.json({ data, hasNext: start + PAGE_SIZE < tasks.length })
   }),
 
-  http.get('/api/task/:id', async ({ request, params }) => {
+  http.get<{ id: string }>('/api/task/:id', async ({ request, params }) => {
     await networkDelay()
     if (!requireAuth(request)) return unauthorized()
 
-    const task = mockDb.findTask(Number(params['id']))
+    const task = mockDb.findTask(params.id)
     if (!task) return notFound()
 
     const { title, memo, registerDatetime } = task
     return HttpResponse.json({ title, memo, registerDatetime })
   }),
 
-  http.delete('/api/task/:id', async ({ request, params }) => {
+  http.delete<{ id: string }>('/api/task/:id', async ({ request, params }) => {
     await networkDelay()
     if (!requireAuth(request)) return unauthorized()
 
-    if (!mockDb.deleteTask(Number(params['id']))) return notFound()
+    if (!mockDb.deleteTask(params.id)) return notFound()
     return HttpResponse.json({ success: true })
   }),
 ]
