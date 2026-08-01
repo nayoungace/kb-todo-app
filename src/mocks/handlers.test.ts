@@ -78,20 +78,49 @@ describe('MSW 핸들러', () => {
     expect(response.status).toBe(400)
   })
 
+  it.each(['0', '-1', '1.5', 'abc'])('task 목록: page=%s 는 400을 반환한다', async (page) => {
+    const response = await fetch(apiUrl(`/api/task?page=${page}`), { headers: validAuthHeaders() })
+
+    expect(response.status).toBe(400)
+  })
+
   it('task 목록: page size 20으로 페이지네이션하고 마지막 페이지에서 hasNext가 false다', async () => {
     const first = await fetch(apiUrl('/api/task?page=1'), { headers: validAuthHeaders() })
-    const firstBody = (await first.json()) as { data: { id: number }[]; hasNext: boolean }
+    const firstBody = (await first.json()) as { data: { id: string }[]; hasNext: boolean }
     expect(firstBody.data).toHaveLength(20)
     expect(firstBody.hasNext).toBe(true)
 
     const last = await fetch(apiUrl('/api/task?page=11'), { headers: validAuthHeaders() })
-    const lastBody = (await last.json()) as { data: { id: number }[]; hasNext: boolean }
+    const lastBody = (await last.json()) as { data: { id: string }[]; hasNext: boolean }
     expect(lastBody.data).toHaveLength(20)
     expect(lastBody.hasNext).toBe(false)
   })
 
+  it('task 목록: 항목의 id는 openapi 계약대로 문자열이다', async () => {
+    const response = await fetch(apiUrl('/api/task?page=1'), { headers: validAuthHeaders() })
+
+    const body = (await response.json()) as { data: { id: string }[] }
+    expect(body.data[0]?.id).toBe('1')
+  })
+
+  it('task 목록: 항목은 registerDatetime을 포함하지 않는다', async () => {
+    const response = await fetch(apiUrl('/api/task?page=1'), { headers: validAuthHeaders() })
+
+    const body = (await response.json()) as { data: Record<string, unknown>[] }
+    expect(Object.keys(body.data[0] ?? {})).toEqual(['id', 'title', 'memo', 'status'])
+  })
+
   it('task 상세: 존재하지 않는 id는 404를 반환한다', async () => {
     const response = await fetch(apiUrl('/api/task/99999'), { headers: validAuthHeaders() })
+
+    expect(response.status).toBe(404)
+  })
+
+  it('task 삭제: 존재하지 않는 id는 404를 반환한다', async () => {
+    const response = await fetch(apiUrl('/api/task/99999'), {
+      method: 'DELETE',
+      headers: validAuthHeaders(),
+    })
 
     expect(response.status).toBe(404)
   })

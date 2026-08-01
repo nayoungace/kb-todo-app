@@ -8,13 +8,16 @@ Github [@nayoungace](https://github.com/nayoungace/) 유저의 프론트엔드 �
 pnpm install
 pnpm dev          # 개발 서버 (MSW 목 서버 자동 기동)
 pnpm build        # 타입 체크 + 프로덕션 빌드
-pnpm preview      # 빌드 결과 미리보기
+pnpm preview      # 빌드 결과 미리보기 (여기서도 MSW 가 기동한다)
 pnpm test         # 단위/통합 테스트 (Vitest)
-pnpm lint         # oxlint
+pnpm lint         # oxlint + steiger(FSD 구조 검사)
+pnpm lint:fsd     # FSD 구조 검사만
 pnpm format       # prettier
 ```
 
 Node 20 이상, 패키지 매니저는 pnpm(`packageManager` 필드에 고정).
+
+로그인 계정은 `test@kb.co.kr` / `password123` 이다. 실제 백엔드가 없으므로 MSW 를 `dev` 뿐 아니라 **프로덕션 빌드에서도 기동**한다. `pnpm build && pnpm preview` 로 띄운 결과물에서도 모든 화면이 그대로 동작한다.
 
 ## 기술 선택
 
@@ -39,10 +42,10 @@ src/
 ├── routes/       # TanStack Router 코드젠 대상. pages 레이어를 연결만 하는 얇은 파일
 ├── pages/        # 화면 단위 조립
 ├── widgets/      # 여러 도메인을 합성하는 UI 블록 (앱 셸/GNB/LNB 등)
-├── features/     # (예정) 사용자 행위 단위 — 로그인, 할 일 삭제 등
-├── entities/     # (예정) 도메인 모델과 Repository — session, task, user, dashboard
+├── features/     # 사용자 행위 단위 — 로그인(auth-sign-in), 할 일 삭제(예정)
+├── entities/     # 도메인 모델과 Repository/Queries — session, task, user, dashboard
 ├── shared/       # 공용 UI(직접 만든 것은 shared/ui, shadcn 산출물은 shared/shadcn), 설정, 유틸
-│                 #   (예정) shared/api 의 httpClient
+│                 #   shared/api 에 httpClient·tokenStore·401 refresh
 ├── mocks/        # MSW 핸들러 (브라우저/노드 공용)
 └── test/         # 테스트 셋업
 ```
@@ -60,12 +63,37 @@ import { DashboardPage } from '@/pages/dashboard/ui/dashboard-page' // X
 
 같은 레이어의 슬라이스끼리는 서로 참조하지 않는다. GNB(`app-header`)와 LNB(`app-sidebar`)를 별도 위젯으로 두지 않고 `widgets/app-shell` 슬라이스 내부에 둔 것이 이 규칙 때문이다. 셸 없이 단독으로 쓰이지 않으므로 슬라이스를 나눌 이유가 없다.
 
-**예외 — `shared/`**: FSD에서 `shared`는 슬라이스가 없고 세그먼트가 바로 오는 레이어이므로 위 규칙의 대상이 아니다. 또 `shared/shadcn/`에 배럴을 두면 shadcn CLI가 컴포넌트를 추가할 때마다 수동 갱신이 필요해 깨지기 쉽다. 따라서 `shared`는 파일 단위로 직접 import한다.
+**예외 — `shared/`**: FSD에서 `shared`는 슬라이스가 없고 세그먼트가 바로 오는 레이어이므로 위 규칙의 대상이 아니다. 또 `shared/shadcn/`에 배럴을 두면 shadcn CLI가 컴포넌트를 추가할 때마다 수동 갱신이 필요해 깨지기 쉽다. 따라서 `shared`는 원칙적으로 **파일 단위로 직접 import**한다.
 
 ```ts
 import { Button } from '@/shared/shadcn/ui/button'
 import { ROUTES } from '@/shared/config/routes'
+import { StatCard } from '@/shared/ui/stat-card'
 ```
+
+단 하나의 예외가 `shared/api`다. `httpClient`·`tokenStore`·`refreshAccessToken`·`HttpError`는 "401을 만나면 refresh 후 재시도한다"는 하나의 파이프라인을 이루고 바깥에서는 그 조합만 쓰므로, 내부 파일 분할을 감추도록 세그먼트 단위 public API(`shared/api/index.ts`)를 둔다. shadcn 처럼 생성물이 계속 늘어나는 곳이 아니라 배럴 유지 비용도 없다.
+
+```ts
+import { httpClient, HttpError } from '@/shared/api'
+```
+
+### 규칙 검사
+
+위 규칙은 리뷰가 아니라 [steiger](https://github.com/feature-sliced/steiger)(FSD 공식 린터)가 `pnpm lint`에서 검사한다. 레이어 하향 참조, 같은 레이어 슬라이스 간 참조, 슬라이스 public API 우회가 자동으로 걸린다.
+
+문서화한 예외는 `steiger.config.js`에서 사유와 함께 끈다. 세 가지다.
+
+| 끈 규칙                                          | 범위            | 사유                                                                                                                                     |
+| ------------------------------------------------ | --------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
+| `fsd/public-api`, `fsd/no-reserved-folder-names` | `src/shared/**` | 위 "예외 — `shared/`"                                                                                                                    |
+| `fsd/no-public-api-sidestep`                     | 전체            | `shared`에 배럴이 없으므로 파일 단위 진입이 정상 경로다                                                                                  |
+| `fsd/insignificant-slice`                        | 전체            | 화면 조립이 스텁이라 엔티티 참조가 아직 0건이고, `widgets`/`pages`는 코드젠 대상인 `src/routes`에서만 참조되어 참조 수가 세어지지 않는다 |
+
+### 데이터 레이어
+
+서버 데이터는 `entities/*/api`의 **Repository**(HTTP 호출)와 `entities/*/model`의 **Queries**(캐시 정책)로 나눈다. Repository는 정적 메서드 클래스이고 react-query에 의존하지 않으며, Queries는 `queryOptions`/`infiniteQueryOptions` 팩토리 객체다. 뮤테이션은 `features/`의 훅에 둔다.
+
+로그인처럼 성공 후 세션 반영과 화면 이동이 따라붙는 뮤테이션은 `features/auth-sign-in`의 훅이 들고, 페이지는 폼 UI만 맡는다.
 
 ## 스타일 정책
 

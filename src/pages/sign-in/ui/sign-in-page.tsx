@@ -1,11 +1,7 @@
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useMutation } from '@tanstack/react-query'
-import { useNavigate } from '@tanstack/react-router'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
-import { AuthRepository, establishSession } from '@/entities/session'
-import { HttpError } from '@/shared/api'
-import { ROUTES } from '@/shared/config/routes'
+import { useSignIn } from '@/features/auth-sign-in'
 import { Button } from '@/shared/shadcn/ui/button'
 import { Card, CardContent } from '@/shared/shadcn/ui/card'
 import { Field, FieldError, FieldGroup, FieldLabel } from '@/shared/shadcn/ui/field'
@@ -24,7 +20,7 @@ const signInSchema = z.object({
 type SignInFormValues = z.infer<typeof signInSchema>
 
 export function SignInPage() {
-  const navigate = useNavigate()
+  const { signIn, isPending, errorMessage } = useSignIn()
   const {
     register,
     handleSubmit,
@@ -35,17 +31,6 @@ export function SignInPage() {
     defaultValues: { email: '', password: '' },
   })
 
-  const signInMutation = useMutation({
-    mutationFn: AuthRepository.signIn,
-    onSuccess: (tokens) => {
-      establishSession(tokens)
-      void navigate({ to: ROUTES.DASHBOARD })
-    },
-  })
-
-  const errorMessage =
-    signInMutation.error instanceof HttpError ? signInMutation.error.message : null
-
   return (
     <main className="flex min-h-dvh items-center justify-center p-6">
       <div className="w-full max-w-sm md:max-w-3xl">
@@ -53,7 +38,7 @@ export function SignInPage() {
           <CardContent className="grid p-0 md:grid-cols-2">
             <form
               className="p-6 md:p-8"
-              onSubmit={handleSubmit((values) => signInMutation.mutate(values))}
+              onSubmit={handleSubmit((values) => signIn(values))}
               noValidate
             >
               <FieldGroup>
@@ -89,7 +74,7 @@ export function SignInPage() {
                 {/* TODO: 공용 에러 모달 도입 시 대체 */}
                 {errorMessage && <FieldError>{errorMessage}</FieldError>}
                 <Field>
-                  <Button type="submit" disabled={!isValid || signInMutation.isPending}>
+                  <Button type="submit" disabled={!isValid || isPending}>
                     로그인
                   </Button>
                 </Field>

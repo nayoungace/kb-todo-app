@@ -7,9 +7,8 @@ import { queryClient } from './query-client'
 import { router } from './router'
 import './styles/global.css'
 
+// 실제 백엔드가 없어 MSW 가 그 역할을 대신하므로 프로덕션 빌드에서도 기동한다.
 async function enableMocking() {
-  if (!import.meta.env.DEV) return
-
   const { worker } = await import('@/mocks/browser')
   await worker.start({ onUnhandledRequest: 'bypass' })
 }

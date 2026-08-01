@@ -3,6 +3,7 @@ import { SEED_ACCOUNT } from '../data/db'
 import { networkDelay } from '../lib/delay'
 import { createFakeJwt, decodeJwt, isExpired } from '../lib/jwt'
 
+// 401 -> refresh -> 재시도 경로를 브라우저에서 바로 확인할 수 있도록 의도적으로 짧게 둔다.
 export const ACCESS_TOKEN_TTL_SECONDS = 30
 const REFRESH_TOKEN_TTL_SECONDS = 60 * 60 * 24 * 7
 

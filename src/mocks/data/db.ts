@@ -1,5 +1,5 @@
 export interface TaskRecord {
-  id: number
+  id: string
   title: string
   memo: string
   status: 'TODO' | 'DONE'
@@ -19,12 +19,12 @@ const TASK_COUNT = 220
 function createSeedTasks(): TaskRecord[] {
   const baseTime = Date.UTC(2026, 0, 1, 9)
   return Array.from({ length: TASK_COUNT }, (_, index) => {
-    const id = index + 1
+    const seq = index + 1
     return {
-      id,
-      title: `할 일 ${id}`,
-      memo: `${id}번째 할 일 메모입니다.`,
-      status: id % 3 === 0 ? 'DONE' : 'TODO',
+      id: String(seq),
+      title: `할 일 ${seq}`,
+      memo: `${seq}번째 할 일 메모입니다.`,
+      status: seq % 3 === 0 ? 'DONE' : 'TODO',
       registerDatetime: new Date(baseTime + index * 3_600_000).toISOString(),
     }
   })
@@ -36,10 +36,10 @@ export const mockDb = {
   getTasks(): TaskRecord[] {
     return tasks
   },
-  findTask(id: number): TaskRecord | undefined {
+  findTask(id: string): TaskRecord | undefined {
     return tasks.find((task) => task.id === id)
   },
-  deleteTask(id: number): boolean {
+  deleteTask(id: string): boolean {
     const before = tasks.length
     tasks = tasks.filter((task) => task.id !== id)
     return tasks.length < before
