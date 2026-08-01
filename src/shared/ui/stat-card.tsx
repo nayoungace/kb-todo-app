@@ -1,13 +1,13 @@
 import type { LucideIcon } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/shared/shadcn/ui/card'
 
-interface DashboardStatCardProps {
+interface StatCardProps {
   label: string
-  count: number
+  value: number
   icon: LucideIcon
 }
 
-export function DashboardStatCard({ label, count, icon: Icon }: DashboardStatCardProps) {
+export function StatCard({ label, value, icon: Icon }: StatCardProps) {
   return (
     <Card size="sm">
       <CardHeader>
@@ -17,7 +17,7 @@ export function DashboardStatCard({ label, count, icon: Icon }: DashboardStatCar
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <p className="text-3xl font-bold tabular-nums">{count}</p>
+        <p className="text-3xl font-bold tabular-nums">{value}</p>
       </CardContent>
     </Card>
   )
