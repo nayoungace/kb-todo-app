@@ -1,16 +1,19 @@
+import type { ReactNode } from 'react'
 import { screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { http, HttpResponse } from 'msw'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { server } from '@/mocks/server'
 import { SignInPage } from '@/pages/sign-in'
+import { TaskDetailPage } from '@/pages/task-detail'
 import { errorModalStore } from '@/shared/lib/error-modal-store'
 import { ErrorModal } from '@/shared/ui/error-modal'
-import { renderWithProviders, TEST_ACCOUNT } from '@/test/test-utils'
+import { authenticateForTest, renderWithProviders, TEST_ACCOUNT } from '@/test/test-utils'
 import { queryClient } from './query-client'
 
 vi.mock('@tanstack/react-router', async (importOriginal) => ({
   ...(await importOriginal<typeof import('@tanstack/react-router')>()),
+  Link: ({ to, children }: { to: string; children: ReactNode }) => <a href={to}>{children}</a>,
   useNavigate: () => vi.fn(),
 }))
 
@@ -81,5 +84,31 @@ describe('로그인 실패 표시', () => {
     await waitFor(() => {
       expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
     })
+  })
+})
+
+describe('삭제 실패 표시', () => {
+  it('뮤테이션 404 는 서버 문구를 모달로 띄우고 상세 화면을 유지한다', async () => {
+    authenticateForTest()
+    server.use(
+      http.delete('/api/task/:id', () =>
+        HttpResponse.json({ errorMessage: '할 일을 찾을 수 없습니다' }, { status: 404 }),
+      ),
+    )
+
+    renderWithProviders(
+      <>
+        <TaskDetailPage id="1" />
+        <ErrorModal />
+      </>,
+      queryClient,
+    )
+
+    await userEvent.click(await screen.findByRole('button', { name: '삭제' }))
+    await userEvent.type(await screen.findByLabelText('할 일 id'), '1')
+    await userEvent.click(screen.getByRole('button', { name: '제출' }))
+
+    expect(await screen.findByRole('dialog')).toHaveTextContent('할 일을 찾을 수 없습니다')
+    expect(screen.getByText('할 일 1')).toBeInTheDocument()
   })
 })
