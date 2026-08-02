@@ -42,7 +42,7 @@ src/
 ├── routes/       # TanStack Router 코드젠 대상. pages 레이어를 연결만 하는 얇은 파일
 ├── pages/        # 화면 단위 조립
 ├── widgets/      # 여러 도메인을 합성하는 UI 블록 (앱 셸/GNB/LNB 등)
-├── features/     # 사용자 행위 단위 — 로그인(auth-sign-in), 할 일 삭제(예정)
+├── features/     # 사용자 행위 단위 — 로그인(auth-sign-in), 할 일 삭제(task-delete)
 ├── entities/     # 도메인 모델과 Repository/Queries — session, task, user, dashboard
 ├── shared/       # 공용 UI(직접 만든 것은 shared/ui, shadcn 산출물은 shared/shadcn), 설정, 유틸
 │                 #   shared/api 에 httpClient·tokenStore·401 refresh
