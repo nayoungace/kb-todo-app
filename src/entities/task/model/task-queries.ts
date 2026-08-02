@@ -11,6 +11,7 @@ export const taskQueries = {
       initialPageParam: 1,
       getNextPageParam: (lastPage, _allPages, lastPageParam) =>
         lastPage.hasNext ? lastPageParam + 1 : undefined,
+      meta: { hasInlineErrorUi: true },
     }),
 
   detail: (id: string) =>

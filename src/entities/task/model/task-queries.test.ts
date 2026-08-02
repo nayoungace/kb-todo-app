@@ -22,6 +22,10 @@ describe('taskQueries.list', () => {
 
     expect(getNextPageParam(pageOf(false), [pageOf(false)], 11, [11])).toBeUndefined()
   })
+
+  it('목록 화면이 자체 재시도 UI를 가지므로 meta로 모달 대상에서 빠진다', () => {
+    expect(taskQueries.list().meta).toEqual({ hasInlineErrorUi: true })
+  })
 })
 
 describe('taskQueries.list 통합', () => {

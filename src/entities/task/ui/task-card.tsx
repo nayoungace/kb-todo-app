@@ -1,10 +1,9 @@
 import { Badge } from '@/shared/shadcn/ui/badge'
 import { Card, CardContent } from '@/shared/shadcn/ui/card'
+import { Skeleton } from '@/shared/shadcn/ui/skeleton'
 import type { TaskItem, TaskStatus } from '../model/types'
 
-/** 가상 스크롤의 estimateSize 가 쓰는 값이므로 아래 h-24 와 함께 바뀌어야 한다. */
 export const TASK_CARD_HEIGHT = 96
-export const TASK_CARD_GAP = 12
 
 const STATUS_LABEL: Record<TaskStatus, string> = {
   TODO: '해야할 일',
@@ -26,6 +25,20 @@ export function TaskCard({ task }: TaskCardProps) {
           </Badge>
         </div>
         <p className="text-muted-foreground line-clamp-2 text-sm">{task.memo}</p>
+      </CardContent>
+    </Card>
+  )
+}
+
+export function TaskCardSkeleton() {
+  return (
+    <Card size="sm" className="h-24 justify-center">
+      <CardContent className="flex flex-col gap-2">
+        <div className="flex items-center justify-between gap-2">
+          <Skeleton className="h-5 w-40" />
+          <Skeleton className="h-5 w-16" />
+        </div>
+        <Skeleton className="h-4 w-3/4" />
       </CardContent>
     </Card>
   )

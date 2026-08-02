@@ -49,6 +49,17 @@ describe('QueryBoundary', () => {
     expect(screen.getByText('할 일 목록')).toBeInTheDocument()
   })
 
+  it('이미 받은 데이터가 있는 실패에는 직전 내용을 지우지 않는다', () => {
+    render(
+      <QueryBoundary query={createQuery({ isError: true, data: '할 일 목록' })} skeleton={<div />}>
+        {(data) => <p>{data}</p>}
+      </QueryBoundary>,
+    )
+
+    expect(screen.getByText('할 일 목록')).toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: '다시 시도' })).not.toBeInTheDocument()
+  })
+
   it('실패 시 문구를 노출하지 않는다 — 문구는 공용 에러 모달이 책임진다', () => {
     const { container } = render(
       <QueryBoundary query={createQuery({ isError: true })} skeleton={<div />}>
