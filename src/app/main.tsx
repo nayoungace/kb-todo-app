@@ -3,6 +3,7 @@ import { createRoot } from 'react-dom/client'
 import { QueryClientProvider } from '@tanstack/react-query'
 import { RouterProvider } from '@tanstack/react-router'
 import { bootstrapSession } from '@/entities/session'
+import { ErrorModal } from '@/shared/ui/error-modal'
 import { queryClient } from './query-client'
 import { router } from './router'
 import './styles/global.css'
@@ -26,6 +27,7 @@ void enableMocking().then(() => {
     <StrictMode>
       <QueryClientProvider client={queryClient}>
         <RouterProvider router={router} />
+        <ErrorModal />
       </QueryClientProvider>
     </StrictMode>,
   )
