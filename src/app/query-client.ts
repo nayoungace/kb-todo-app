@@ -1,3 +1,4 @@
+import type { QueryMeta } from '@tanstack/react-query'
 import { MutationCache, QueryCache, QueryClient } from '@tanstack/react-query'
 import { HttpError, toErrorMessage } from '@/shared/api'
 import { errorModalStore } from '@/shared/lib/error-modal-store'
@@ -10,6 +11,10 @@ export function shouldOpenErrorModal(error: unknown, scope: 'query' | 'mutation'
   return true
 }
 
+export function isSilentQueryError(query: { meta?: QueryMeta; state: { data: unknown } }): boolean {
+  return query.meta?.hasInlineErrorUi === true && query.state.data !== undefined
+}
+
 function report(error: unknown, scope: 'query' | 'mutation'): void {
   if (!shouldOpenErrorModal(error, scope)) return
   errorModalStore.show(toErrorMessage(error))
@@ -17,7 +22,10 @@ function report(error: unknown, scope: 'query' | 'mutation'): void {
 
 export const queryClient = new QueryClient({
   queryCache: new QueryCache({
-    onError: (error) => report(error, 'query'),
+    onError: (error, query) => {
+      if (isSilentQueryError(query)) return
+      report(error, 'query')
+    },
   }),
   mutationCache: new MutationCache({
     onError: (error, _variables, _context, mutation) => {

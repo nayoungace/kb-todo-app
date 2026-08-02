@@ -16,6 +16,8 @@ interface QueryBoundaryProps<T> {
 
 export function QueryBoundary<T>({ query, skeleton, children }: QueryBoundaryProps<T>): ReactNode {
   if (query.isPending) return skeleton
-  if (query.isError) return <ErrorState onRetry={() => void query.refetch()} />
+  if (query.isError && query.data === undefined) {
+    return <ErrorState onRetry={() => void query.refetch()} />
+  }
   return children(query.data as T)
 }

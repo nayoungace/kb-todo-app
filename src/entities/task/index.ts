@@ -8,4 +8,4 @@ export type {
   TaskListResponse,
   TaskStatus,
 } from './model/types'
-export { TASK_CARD_GAP, TASK_CARD_HEIGHT, TaskCard } from './ui/task-card'
+export { TASK_CARD_HEIGHT, TaskCard, TaskCardSkeleton } from './ui/task-card'

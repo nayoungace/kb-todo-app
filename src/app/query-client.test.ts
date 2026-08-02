@@ -2,7 +2,7 @@ import { QueryClient } from '@tanstack/react-query'
 import { afterEach, describe, expect, it } from 'vitest'
 import { HttpError } from '@/shared/api'
 import { errorModalStore } from '@/shared/lib/error-modal-store'
-import { queryClient, shouldOpenErrorModal } from './query-client'
+import { isSilentQueryError, queryClient, shouldOpenErrorModal } from './query-client'
 
 afterEach(() => {
   errorModalStore.close()
@@ -43,6 +43,24 @@ describe('shouldOpenErrorModal', () => {
   })
 })
 
+describe('isSilentQueryError', () => {
+  it('meta 를 달지 않은 쿼리는 데이터가 남아 있어도 모달을 띄운다', () => {
+    expect(isSilentQueryError({ state: { data: { pages: [] } } })).toBe(false)
+  })
+
+  it('첫 로딩 실패는 대신 표현할 데이터가 없으므로 모달을 띄운다', () => {
+    expect(
+      isSilentQueryError({ meta: { hasInlineErrorUi: true }, state: { data: undefined } }),
+    ).toBe(false)
+  })
+
+  it('데이터가 남아 있는 실패는 화면의 재시도 UI 에 맡긴다', () => {
+    expect(
+      isSilentQueryError({ meta: { hasInlineErrorUi: true }, state: { data: { pages: [] } } }),
+    ).toBe(true)
+  })
+})
+
 describe('queryClient 배선', () => {
   it('쿼리 실패가 서버 문구를 담아 모달 스토어를 연다', async () => {
     await expect(
@@ -66,6 +84,37 @@ describe('queryClient 배선', () => {
     ).rejects.toThrow()
 
     expect(errorModalStore.get()).toBeNull()
+  })
+
+  it('인라인 에러 UI 를 가진 쿼리는 데이터를 받은 뒤의 실패로 모달을 열지 않는다', async () => {
+    const queryKey = ['test', 'inline-error']
+    const meta = { hasInlineErrorUi: true }
+    await queryClient.fetchQuery({ queryKey, meta, queryFn: () => Promise.resolve('첫 응답') })
+
+    await expect(
+      queryClient.fetchQuery({
+        queryKey,
+        meta,
+        queryFn: () => Promise.reject(new HttpError(500, '서버가 응답하지 않습니다')),
+        retry: false,
+        staleTime: 0,
+      }),
+    ).rejects.toThrow()
+
+    expect(errorModalStore.get()).toBeNull()
+  })
+
+  it('인라인 에러 UI 를 가진 쿼리도 첫 로딩 실패는 모달을 연다', async () => {
+    await expect(
+      queryClient.fetchQuery({
+        queryKey: ['test', 'inline-error-first-load'],
+        meta: { hasInlineErrorUi: true },
+        queryFn: () => Promise.reject(new HttpError(500, '서버가 응답하지 않습니다')),
+        retry: false,
+      }),
+    ).rejects.toThrow()
+
+    expect(errorModalStore.get()).toBe('서버가 응답하지 않습니다')
   })
 
   it('뮤테이션 실패는 모달 스토어를 연다', async () => {

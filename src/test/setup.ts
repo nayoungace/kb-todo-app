@@ -5,6 +5,8 @@ import { resetMockDb } from '@/mocks/data/db'
 import { server } from '@/mocks/server'
 import { tokenStore } from '@/shared/api'
 
+window.scrollTo = () => {}
+
 beforeAll(() => server.listen({ onUnhandledRequest: 'error' }))
 
 afterEach(() => {
