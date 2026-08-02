@@ -47,6 +47,26 @@ describe('httpClient', () => {
     expect((error as HttpError).message).toBe('HTTP 500')
   })
 
+  it('HttpError에 요청이 인증 요청이었는지를 실어 보낸다', async () => {
+    server.use(
+      http.get('/api/echo', () => HttpResponse.json({ errorMessage: '만료' }, { status: 401 })),
+      http.post('/api/sign-in', () =>
+        HttpResponse.json(
+          { errorMessage: '이메일 또는 비밀번호가 올바르지 않습니다' },
+          { status: 401 },
+        ),
+      ),
+    )
+
+    const authed = await httpClient.get('/api/echo').catch((e: unknown) => e)
+    const anonymous = await httpClient
+      .post('/api/sign-in', { body: {}, auth: false })
+      .catch((e: unknown) => e)
+
+    expect((authed as HttpError).authenticated).toBe(true)
+    expect((anonymous as HttpError).authenticated).toBe(false)
+  })
+
   it('204 no-content 응답은 undefined를 반환한다', async () => {
     server.use(http.delete('/api/task/1', () => new HttpResponse(null, { status: 204 })))
 

@@ -37,7 +37,7 @@ function execute(url: URL, options: RequestOptions, withAuth: boolean): Promise<
   })
 }
 
-async function toHttpError(response: Response): Promise<HttpError> {
+async function toHttpError(response: Response, authenticated: boolean): Promise<HttpError> {
   let message = `HTTP ${response.status}`
   try {
     const body = (await response.json()) as { errorMessage?: string }
@@ -45,7 +45,7 @@ async function toHttpError(response: Response): Promise<HttpError> {
   } catch {
     // JSON 파싱 실패 시 상태 코드 폴백 메시지를 유지한다.
   }
-  return new HttpError(response.status, message)
+  return new HttpError(response.status, message, authenticated)
 }
 
 async function request<T>(path: string, options: RequestOptions = {}): Promise<T> {
@@ -59,7 +59,7 @@ async function request<T>(path: string, options: RequestOptions = {}): Promise<T
     if (refreshed) response = await execute(url, options, auth)
   }
 
-  if (!response.ok) throw await toHttpError(response)
+  if (!response.ok) throw await toHttpError(response, auth)
 
   if (response.status === 204 || response.headers.get('content-length') === '0') {
     return undefined as T
