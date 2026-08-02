@@ -20,7 +20,7 @@ const signInSchema = z.object({
 type SignInFormValues = z.infer<typeof signInSchema>
 
 export function SignInPage() {
-  const { signIn, isPending, errorMessage } = useSignIn()
+  const { signIn, isPending } = useSignIn()
   const {
     register,
     handleSubmit,
@@ -71,8 +71,6 @@ export function SignInPage() {
                   />
                   <FieldError errors={[errors.password]} />
                 </Field>
-                {/* TODO: 공용 에러 모달 도입 시 대체 */}
-                {errorMessage && <FieldError>{errorMessage}</FieldError>}
                 <Field>
                   <Button type="submit" disabled={!isValid || isPending}>
                     로그인
