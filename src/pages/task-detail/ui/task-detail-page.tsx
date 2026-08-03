@@ -19,9 +19,7 @@ export function TaskDetailPage({ id }: TaskDetailPageProps) {
 
   return (
     <section className="flex flex-col gap-6">
-      <div>
-        <h1 className="mt-2 text-2xl font-bold">할 일 상세</h1>
-      </div>
+      <h1 className="text-2xl font-bold">할 일 상세</h1>
 
       <QueryBoundary query={task} skeleton={<TaskDetailSkeleton />}>
         {(data) => <TaskDetailCard id={id} task={data} />}
