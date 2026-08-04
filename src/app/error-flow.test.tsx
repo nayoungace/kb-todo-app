@@ -49,6 +49,15 @@ describe('로그인 실패 표시', () => {
     )
   })
 
+  it('모달의 제목은 오류이고 서버 문구는 설명에 온다', async () => {
+    renderSignIn()
+
+    await submit('wrongpassword1')
+
+    const dialog = await screen.findByRole('dialog', { name: '오류' })
+    expect(dialog).toHaveAccessibleDescription('이메일 또는 비밀번호가 올바르지 않습니다')
+  })
+
   it('API 에러를 인라인으로 중복 표시하지 않는다', async () => {
     renderSignIn()
 
