@@ -1,4 +1,4 @@
-import { useEffect, useLayoutEffect, useRef, useState } from 'react'
+import { useEffect, useRef } from 'react'
 import { Link } from '@tanstack/react-router'
 import { useWindowVirtualizer } from '@tanstack/react-virtual'
 import type { TaskItem } from '@/entities/task'
@@ -7,6 +7,7 @@ import { ROUTES } from '@/shared/config/routes'
 import { ErrorState } from '@/shared/ui/error-state'
 import { shouldLoadMore } from '../lib/should-load-more'
 import { TASK_CARD_GAP } from '../lib/task-list-layout'
+import { useScrollMargin } from '../lib/use-scroll-margin'
 
 interface TaskListProps {
   tasks: TaskItem[]
@@ -28,17 +29,12 @@ export function TaskList({
   onRetry,
 }: TaskListProps) {
   const listRef = useRef<HTMLUListElement>(null)
-  const [scrollMargin, setScrollMargin] = useState(0)
+  const scrollMargin = useScrollMargin(listRef)
 
-  useLayoutEffect(() => {
-    const list = listRef.current
-    if (!list) return
-    setScrollMargin(list.getBoundingClientRect().top + window.scrollY)
-  }, [])
-
-  const virtualizer = useWindowVirtualizer({
+  const virtualizer = useWindowVirtualizer<HTMLLIElement>({
     count: tasks.length,
     estimateSize: () => TASK_CARD_HEIGHT,
+    measureElement: (element) => element.getBoundingClientRect().height || TASK_CARD_HEIGHT,
     gap: TASK_CARD_GAP,
     overscan: 5,
     scrollMargin,
@@ -68,11 +64,10 @@ export function TaskList({
           return (
             <li
               key={task.id}
+              ref={virtualizer.measureElement}
+              data-index={item.index}
               className="absolute inset-x-0 top-0"
-              style={{
-                height: item.size,
-                transform: `translateY(${item.start - scrollMargin}px)`,
-              }}
+              style={{ transform: `translateY(${item.start - scrollMargin}px)` }}
             >
               <Link to={ROUTES.TASK_DETAIL} params={{ id: task.id }} className="block">
                 <TaskCard task={task} />
