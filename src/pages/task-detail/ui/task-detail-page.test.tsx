@@ -27,13 +27,16 @@ beforeEach(() => {
 })
 
 describe('TaskDetailPage', () => {
-  it('title · memo · registerDatetime 을 보여준다', async () => {
+  it('title · memo · registerDatetime 을 라벨과 함께 보여준다', async () => {
     renderWithProviders(<TaskDetailPage id="1" />)
 
     expect(await screen.findByText('할 일 1')).toBeInTheDocument()
     expect(screen.getByText('1번째 할 일 메모입니다.')).toBeInTheDocument()
-    // 시드 1번의 registerDatetime 은 2026-01-01T09:00:00Z 다.
     expect(screen.getByText(/2026년 1월 1일/)).toBeInTheDocument()
+
+    expect(screen.getByText('제목')).toBeInTheDocument()
+    expect(screen.getByText('메모')).toBeInTheDocument()
+    expect(screen.getByText('등록일자')).toBeInTheDocument()
   })
 
   it('404 면 목록으로 돌아가는 버튼이 있는 화면을 보여준다 — 재시도 버튼이 아니다', async () => {
