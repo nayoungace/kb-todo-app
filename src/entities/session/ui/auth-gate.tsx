@@ -11,7 +11,12 @@ export function AuthGate({ children }: { children: ReactNode }): ReactNode {
 
   if (status === 'restoring') {
     return (
-      <div className="flex flex-col gap-4" aria-busy="true">
+      <div
+        className="flex flex-col gap-4"
+        role="status"
+        aria-busy="true"
+        aria-label="세션을 확인하는 중"
+      >
         <Skeleton className="h-8 w-48" />
         <Skeleton className="h-32 w-full" />
       </div>

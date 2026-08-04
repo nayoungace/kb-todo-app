@@ -7,6 +7,25 @@ import { tokenStore } from '@/shared/api'
 
 window.scrollTo = () => {}
 
+class ResizeObserverStub implements ResizeObserver {
+  observe(): void {}
+  unobserve(): void {}
+  disconnect(): void {}
+}
+
+globalThis.ResizeObserver ??= ResizeObserverStub
+
+window.matchMedia ??= ((query: string) => ({
+  matches: false,
+  media: query,
+  onchange: null,
+  addListener: () => {},
+  removeListener: () => {},
+  addEventListener: () => {},
+  removeEventListener: () => {},
+  dispatchEvent: () => false,
+})) as unknown as typeof window.matchMedia
+
 beforeAll(() => server.listen({ onUnhandledRequest: 'error' }))
 
 afterEach(() => {

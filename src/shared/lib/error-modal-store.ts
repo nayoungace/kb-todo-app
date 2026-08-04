@@ -14,7 +14,12 @@ export const errorModalStore = {
     return message
   },
   show(next: string): void {
-    if (message !== null) return
+    if (message !== null) {
+      if (import.meta.env.DEV) {
+        console.error('[error-modal] 표시 중인 오류가 있어 버려진 메시지:', next)
+      }
+      return
+    }
     message = next
     notify()
   },

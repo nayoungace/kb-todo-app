@@ -2,7 +2,12 @@ import { QueryClient } from '@tanstack/react-query'
 import { afterEach, describe, expect, it } from 'vitest'
 import { HttpError } from '@/shared/api'
 import { errorModalStore } from '@/shared/lib/error-modal-store'
-import { isSilentQueryError, queryClient, shouldOpenErrorModal } from './query-client'
+import {
+  isSilentQueryError,
+  queryClient,
+  shouldOpenErrorModal,
+  shouldRetryQuery,
+} from './query-client'
 
 afterEach(() => {
   errorModalStore.close()
@@ -58,6 +63,28 @@ describe('isSilentQueryError', () => {
     expect(
       isSilentQueryError({ meta: { hasInlineErrorUi: true }, state: { data: { pages: [] } } }),
     ).toBe(true)
+  })
+})
+
+describe('shouldRetryQuery', () => {
+  it('404 는 재시도하지 않는다 — 같은 요청을 다시 보내도 답이 바뀌지 않는다', () => {
+    expect(shouldRetryQuery(0, new HttpError(404, '할 일을 찾을 수 없습니다'))).toBe(false)
+  })
+
+  it('나머지 4xx 도 재시도하지 않는다 — 요청 자체가 잘못된 경우다', () => {
+    expect(shouldRetryQuery(0, new HttpError(400, 'page 는 1 이상의 정수여야 합니다'))).toBe(false)
+    expect(shouldRetryQuery(0, new HttpError(401, '인증이 필요합니다'))).toBe(false)
+  })
+
+  it('5xx 는 한 번 재시도한다 — 일시적 실패일 수 있다', () => {
+    const error = new HttpError(500, '서버 오류')
+    expect(shouldRetryQuery(0, error)).toBe(true)
+    expect(shouldRetryQuery(1, error)).toBe(false)
+  })
+
+  it('네트워크 오류도 한 번 재시도한다', () => {
+    expect(shouldRetryQuery(0, new TypeError('Failed to fetch'))).toBe(true)
+    expect(shouldRetryQuery(1, new TypeError('Failed to fetch'))).toBe(false)
   })
 })
 

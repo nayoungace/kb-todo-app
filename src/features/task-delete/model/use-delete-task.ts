@@ -16,9 +16,9 @@ export function useDeleteTask(id: string, onSettled?: () => void): UseDeleteTask
   const mutation = useMutation({
     mutationFn: () => TaskRepository.remove(id),
     onSuccess: async () => {
+      queryClient.removeQueries({ queryKey: taskQueries.list().queryKey })
       await navigate({ to: ROUTES.TASK })
       queryClient.removeQueries({ queryKey: taskQueries.detail(id).queryKey })
-      queryClient.removeQueries({ queryKey: taskQueries.list().queryKey })
       await queryClient.invalidateQueries({ queryKey: dashboardQueries.summary().queryKey })
     },
     onSettled,

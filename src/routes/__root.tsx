@@ -1,6 +1,7 @@
 import { lazy, Suspense } from 'react'
 import type { QueryClient } from '@tanstack/react-query'
-import { createRootRouteWithContext, Outlet } from '@tanstack/react-router'
+import { createRootRouteWithContext, HeadContent, Outlet } from '@tanstack/react-router'
+import { APP_NAME } from '@/shared/config/page-title'
 
 export interface RouterContext {
   queryClient: QueryClient
@@ -25,6 +26,7 @@ const QueryDevtools = import.meta.env.PROD
 function RootComponent() {
   return (
     <>
+      <HeadContent />
       <Outlet />
       <Suspense>
         <RouterDevtools />
@@ -35,5 +37,6 @@ function RootComponent() {
 }
 
 export const Route = createRootRouteWithContext<RouterContext>()({
+  head: () => ({ meta: [{ title: APP_NAME }] }),
   component: RootComponent,
 })

@@ -1,5 +1,12 @@
+import { Check, Clock } from 'lucide-react'
 import { Badge } from '@/shared/shadcn/ui/badge'
-import { Card, CardContent } from '@/shared/shadcn/ui/card'
+import {
+  Item,
+  ItemActions,
+  ItemContent,
+  ItemDescription,
+  ItemTitle,
+} from '@/shared/shadcn/ui/item'
 import { Skeleton } from '@/shared/shadcn/ui/skeleton'
 import type { TaskItem, TaskStatus } from '../model/types'
 
@@ -15,31 +22,36 @@ interface TaskCardProps {
 }
 
 export function TaskCard({ task }: TaskCardProps) {
+  const isDone = task.status === 'DONE'
+
   return (
-    <Card size="sm" className="h-24 justify-center">
-      <CardContent className="flex flex-col gap-1">
-        <div className="flex items-center justify-between gap-2">
-          <h3 className="truncate font-medium">{task.title}</h3>
-          <Badge variant={task.status === 'DONE' ? 'default' : 'outline'}>
-            {STATUS_LABEL[task.status]}
-          </Badge>
-        </div>
-        <p className="text-muted-foreground line-clamp-2 text-sm">{task.memo}</p>
-      </CardContent>
-    </Card>
+    <Item variant="outline" className="h-24 bg-card hover:bg-muted">
+      <ItemContent>
+        <ItemTitle>
+          <h3>{task.title}</h3>
+        </ItemTitle>
+        <ItemDescription>{task.memo}</ItemDescription>
+      </ItemContent>
+      <ItemActions className="translate-y-0.5 self-start">
+        <Badge variant={isDone ? 'default' : 'outline'}>
+          {isDone ? <Check data-icon="inline-start" /> : <Clock data-icon="inline-start" />}
+          {STATUS_LABEL[task.status]}
+        </Badge>
+      </ItemActions>
+    </Item>
   )
 }
 
 export function TaskCardSkeleton() {
   return (
-    <Card size="sm" className="h-24 justify-center">
-      <CardContent className="flex flex-col gap-2">
-        <div className="flex items-center justify-between gap-2">
-          <Skeleton className="h-5 w-40" />
-          <Skeleton className="h-5 w-16" />
-        </div>
-        <Skeleton className="h-4 w-3/4" />
-      </CardContent>
-    </Card>
+    <Item variant="outline" className="h-24 bg-card">
+      <ItemContent>
+        <Skeleton className="h-5 w-40" />
+        <Skeleton className="h-5 w-3/4" />
+      </ItemContent>
+      <ItemActions className="translate-y-0.5 self-start">
+        <Skeleton className="h-5 w-20 rounded-3xl" />
+      </ItemActions>
+    </Item>
   )
 }

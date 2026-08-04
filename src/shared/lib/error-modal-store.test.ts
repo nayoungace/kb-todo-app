@@ -14,12 +14,16 @@ describe('errorModalStore', () => {
     expect(errorModalStore.get()).toBeNull()
   })
 
-  it('이미 열려 있으면 후발 에러를 무시한다', () => {
+  it('이미 열려 있으면 후발 에러를 버리고, 버린 사실을 개발 모드에서 남긴다', () => {
+    const consoleError = vi.spyOn(console, 'error').mockImplementation(() => {})
+
     errorModalStore.show('첫 번째 오류')
     errorModalStore.show('두 번째 오류')
     errorModalStore.show('세 번째 오류')
 
     expect(errorModalStore.get()).toBe('첫 번째 오류')
+    expect(consoleError).toHaveBeenCalledTimes(2)
+    expect(consoleError).toHaveBeenLastCalledWith(expect.any(String), '세 번째 오류')
   })
 
   it('닫은 뒤에는 다시 열린다', () => {
