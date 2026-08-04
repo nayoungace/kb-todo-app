@@ -69,7 +69,11 @@ export function TaskList({
               className="absolute inset-x-0 top-0"
               style={{ transform: `translateY(${item.start - scrollMargin}px)` }}
             >
-              <Link to={ROUTES.TASK_DETAIL} params={{ id: task.id }} className="block">
+              <Link
+                to={ROUTES.TASK_DETAIL}
+                params={{ id: task.id }}
+                className="block rounded-2xl outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50"
+              >
                 <TaskCard task={task} />
               </Link>
             </li>
