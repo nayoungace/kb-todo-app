@@ -1,3 +1,5 @@
+export const PREFETCH_ITEM_COUNT = 5
+
 interface LoadMoreInput {
   lastRenderedIndex: number | undefined
   total: number
@@ -15,5 +17,5 @@ export function shouldLoadMore({
 }: LoadMoreInput): boolean {
   if (!hasNextPage || isFetchingNextPage || hasError) return false
   if (lastRenderedIndex === undefined) return false
-  return lastRenderedIndex >= total - 1
+  return lastRenderedIndex >= total - 1 - PREFETCH_ITEM_COUNT
 }
