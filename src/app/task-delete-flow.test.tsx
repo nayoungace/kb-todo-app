@@ -62,4 +62,22 @@ describe('할 일 삭제 후 목록 복귀', () => {
     await waitFor(() => expect(screen.getByText('할 일 5')).toBeInTheDocument(), FIND_TIMEOUT)
     expect(screen.queryByText('할 일 4')).not.toBeInTheDocument()
   })
+
+  it('삭제한 항목의 상세 주소로 다시 들어가면 404 화면이 나온다', async () => {
+    const user = userEvent.setup()
+    const router = renderApp('/task')
+
+    await deleteTask(user, '4')
+    await screen.findByRole('heading', { level: 1, name: '할 일' }, FIND_TIMEOUT)
+
+    await router.navigate({ to: '/task/$id', params: { id: '4' } })
+
+    expect(
+      await screen.findByRole(
+        'heading',
+        { level: 1, name: '페이지를 찾을 수 없습니다.' },
+        FIND_TIMEOUT,
+      ),
+    ).toBeInTheDocument()
+  })
 })
