@@ -4,6 +4,7 @@ import { Button } from '@/shared/shadcn/ui/button'
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
@@ -19,9 +20,10 @@ export function ErrorModal() {
         if (!open) errorModalStore.close()
       }}
     >
-      <DialogContent showCloseButton={false} aria-describedby={undefined}>
+      <DialogContent showCloseButton={false}>
         <DialogHeader>
-          <DialogTitle>{message}</DialogTitle>
+          <DialogTitle>오류</DialogTitle>
+          <DialogDescription>{message}</DialogDescription>
         </DialogHeader>
         <DialogFooter>
           <Button onClick={() => errorModalStore.close()}>확인</Button>

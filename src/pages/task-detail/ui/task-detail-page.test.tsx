@@ -47,6 +47,17 @@ describe('TaskDetailPage', () => {
     expect(screen.queryByRole('status')).not.toBeInTheDocument()
   })
 
+  it('404 화면의 제목은 상태 코드가 아니라 h1 로 된 설명이다', async () => {
+    renderWithProviders(<TaskDetailPage id="999" />)
+
+    await screen.findByRole('link', { name: '목록으로 돌아가기' })
+
+    expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent(
+      '페이지를 찾을 수 없습니다.',
+    )
+    expect(screen.queryByRole('heading', { name: '404' })).not.toBeInTheDocument()
+  })
+
   it('로딩 중에는 조작 가능한 컨트롤을 렌더하지 않는다', async () => {
     renderWithProviders(<TaskDetailPage id="1" />)
 
