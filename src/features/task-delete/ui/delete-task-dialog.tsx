@@ -26,7 +26,10 @@ export function DeleteTaskDialog({ id }: DeleteTaskDialogProps) {
   const [open, setOpen] = useState(false)
   const { deleteTask, isPending } = useDeleteTask(id, () => setOpen(false))
 
-  const schema = useMemo(() => z.object({ confirmId: z.literal(id) }), [id])
+  const schema = useMemo(
+    () => z.object({ confirmId: z.string().refine((value) => value.trim() === id) }),
+    [id],
+  )
   const {
     register,
     handleSubmit,
