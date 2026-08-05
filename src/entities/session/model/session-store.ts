@@ -1,6 +1,8 @@
 import { refreshAccessToken, tokenStore } from '@/shared/api'
 import type { AuthTokenResponse, SessionStatus } from './types'
 
+const REFRESH_COOKIE_NAME = 'token'
+
 let restored = false
 let bootstrapPromise: Promise<void> | null = null
 const listeners = new Set<() => void>()
@@ -24,6 +26,13 @@ export function bootstrapSession(): Promise<void> {
 export function establishSession(tokens: AuthTokenResponse): void {
   restored = true
   tokenStore.set(tokens.accessToken)
+}
+
+export function clearSession(): void {
+  restored = true
+  tokenStore.clear()
+  document.cookie = `${REFRESH_COOKIE_NAME}=; Path=/; Max-Age=0; SameSite=Strict`
+  notify()
 }
 
 export function getSessionStatus(): SessionStatus {
