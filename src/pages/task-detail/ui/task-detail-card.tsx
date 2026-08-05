@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react'
 import { Link } from '@tanstack/react-router'
-import { CalendarClock, List, ListTodo, NotebookPen } from 'lucide-react'
+import { CalendarClock, Heading, List, NotebookPen } from 'lucide-react'
 import type { TaskDetailResponse } from '@/entities/task'
 import { DeleteTaskDialog } from '@/features/task-delete'
 import { ROUTES } from '@/shared/config/routes'
@@ -46,7 +46,7 @@ export function TaskDetailCard({ id, task }: TaskDetailCardProps) {
     >
       <Item variant="outline">
         <ItemMedia variant="icon">
-          <ListTodo />
+          <Heading />
         </ItemMedia>
         <ItemContent>
           <ItemTitle>제목</ItemTitle>
