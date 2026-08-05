@@ -1,3 +1,4 @@
+import { FALLBACK_MESSAGE } from './error-message'
 import { HttpError } from './http-error'
 import { refreshAccessToken } from './token-refresh'
 import { tokenStore } from './token-store'
@@ -38,13 +39,12 @@ function execute(url: URL, options: RequestOptions, withAuth: boolean): Promise<
 }
 
 async function toHttpError(response: Response, authenticated: boolean): Promise<HttpError> {
-  let message = `HTTP ${response.status}`
-  try {
-    const body = (await response.json()) as { errorMessage?: string }
-    if (typeof body.errorMessage === 'string') message = body.errorMessage
-  } catch {
-    // JSON 파싱 실패 시 상태 코드 폴백 메시지를 유지한다.
-  }
+  const body = await response
+    .json()
+    .then((value: unknown) => value as { errorMessage?: unknown })
+    .catch(() => null)
+  const message = typeof body?.errorMessage === 'string' ? body.errorMessage : FALLBACK_MESSAGE
+
   return new HttpError(response.status, message, authenticated)
 }
 

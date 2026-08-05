@@ -1,6 +1,7 @@
 import { delay, http, HttpResponse } from 'msw'
 import { afterEach, describe, expect, it } from 'vitest'
 import { server } from '@/mocks/server'
+import { FALLBACK_MESSAGE } from './error-message'
 import { httpClient } from './http-client'
 import { HttpError } from './http-error'
 import { tokenStore } from './token-store'
@@ -38,13 +39,14 @@ describe('httpClient', () => {
     expect((error as HttpError).message).toBe('잘못된 요청')
   })
 
-  it('JSON이 아닌 에러 body는 상태 코드 폴백 메시지를 사용한다', async () => {
+  it('JSON이 아닌 에러 body는 공용 폴백 문구를 쓰고 상태 코드는 status에만 남긴다', async () => {
     server.use(http.get('/api/echo', () => new HttpResponse('Internal Error', { status: 500 })))
 
     const error = await httpClient.get('/api/echo').catch((e: unknown) => e)
 
     expect(error).toBeInstanceOf(HttpError)
-    expect((error as HttpError).message).toBe('HTTP 500')
+    expect((error as HttpError).message).toBe(FALLBACK_MESSAGE)
+    expect((error as HttpError).status).toBe(500)
   })
 
   it('HttpError에 요청이 인증 요청이었는지를 실어 보낸다', async () => {
