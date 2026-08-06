@@ -57,6 +57,50 @@ describe('TaskListPage', () => {
     expect(screen.getAllByRole('link').length).toBeLessThan(PAGE_SIZE)
   })
 
+  it('가상 목록도 목록 시맨틱과 전체 위치를 알린다 — 다음 페이지가 남으면 전체 수는 미확정이다', async () => {
+    renderWithProviders(<TaskListPage />)
+    await screen.findByRole('heading', { name: '할 일 1' })
+
+    expect(screen.getByRole('list')).toBeInTheDocument()
+    const [first] = screen.getAllByRole('listitem')
+    expect(first).toHaveAttribute('aria-posinset', '1')
+    expect(first).toHaveAttribute('aria-setsize', '-1')
+  })
+
+  it('마지막 페이지까지 받으면 전체 수를 확정해서 알린다', async () => {
+    server.use(
+      http.get('/api/task', () =>
+        HttpResponse.json({
+          data: [{ id: '1', title: '할 일 1', memo: '1번째 할 일 메모입니다.', status: 'TODO' }],
+          hasNext: false,
+        }),
+      ),
+    )
+    renderWithProviders(<TaskListPage />)
+    await screen.findByRole('heading', { name: '할 일 1' })
+
+    expect(screen.getAllByRole('listitem')[0]).toHaveAttribute('aria-setsize', '1')
+  })
+
+  it('다음 페이지 실패는 문구 없이도 보조기술에 전달된다', async () => {
+    let calls = 0
+    server.use(
+      http.get('/api/task', () => {
+        calls += 1
+        if (calls === 1) {
+          return HttpResponse.json({
+            data: [{ id: '1', title: '할 일 1', memo: '1번째 할 일 메모입니다.', status: 'TODO' }],
+            hasNext: true,
+          })
+        }
+        return HttpResponse.json({ errorMessage: '목록을 불러오지 못했습니다' }, { status: 500 })
+      }),
+    )
+    renderWithProviders(<TaskListPage />)
+
+    expect(await screen.findByRole('alert')).toHaveTextContent('할 일을 더 불러오지 못했습니다.')
+  })
+
   it('카드가 상세 경로로 이동하는 링크다', async () => {
     renderWithProviders(<TaskListPage />)
     await screen.findByRole('heading', { name: '할 일 1' })

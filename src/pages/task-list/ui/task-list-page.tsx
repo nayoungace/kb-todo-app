@@ -1,6 +1,7 @@
 import { useInfiniteQuery } from '@tanstack/react-query'
 import { taskQueries } from '@/entities/task'
 import { ErrorState } from '@/shared/ui/error-state'
+import { MessagePanel } from '@/shared/ui/message-panel'
 import { QueryBoundary } from '@/shared/ui/query-boundary'
 import { TaskList } from './task-list'
 import { TaskListSkeleton } from './task-list-skeleton'
@@ -17,9 +18,7 @@ export function TaskListPage() {
           const tasks = data.pages.flatMap((page) => page.data)
           if (tasks.length === 0) {
             if (list.isError) return <ErrorState onRetry={retry} />
-            return (
-              <p className="text-muted-foreground py-16 text-center">등록된 할 일이 없습니다.</p>
-            )
+            return <MessagePanel title="등록된 할 일이 없습니다." />
           }
           return (
             <TaskList
