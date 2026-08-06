@@ -35,8 +35,7 @@ export const queryClient = new QueryClient({
     },
   }),
   mutationCache: new MutationCache({
-    onError: (error, _variables, _context, mutation) => {
-      if (mutation.meta?.silent === true) return
+    onError: (error) => {
       report(error, 'mutation')
     },
   }),
