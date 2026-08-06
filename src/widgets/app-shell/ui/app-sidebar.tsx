@@ -23,6 +23,7 @@ export function AppSidebar() {
   const { setOpenMobile } = useSidebar()
 
   const authItem = getAuthNavItem(isAuthenticated)
+  const isAuthItemActive = Boolean(matchRoute({ to: authItem.url }))
   const closeMobile = () => setOpenMobile(false)
 
   return (
@@ -46,40 +47,48 @@ export function AppSidebar() {
       <SidebarContent>
         <SidebarGroup>
           <SidebarGroupContent className="flex flex-col gap-2">
-            <SidebarMenu>
-              {NAV_MAIN.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton
-                    asChild
-                    isActive={Boolean(matchRoute({ to: item.url, fuzzy: item.fuzzy }))}
-                    tooltip={item.title}
-                  >
-                    <Link to={item.url} onClick={closeMobile}>
-                      <item.icon />
-                      <span>{item.title}</span>
-                    </Link>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
-            </SidebarMenu>
+            <nav aria-label="사이드 메뉴">
+              <SidebarMenu>
+                {NAV_MAIN.map((item) => {
+                  const isActive = Boolean(matchRoute({ to: item.url, fuzzy: item.fuzzy }))
+
+                  return (
+                    <SidebarMenuItem key={item.title}>
+                      <SidebarMenuButton asChild isActive={isActive} tooltip={item.title}>
+                        <Link
+                          to={item.url}
+                          onClick={closeMobile}
+                          aria-current={isActive ? 'page' : undefined}
+                        >
+                          <item.icon />
+                          <span>{item.title}</span>
+                        </Link>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  )
+                })}
+              </SidebarMenu>
+            </nav>
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
       <SidebarFooter>
-        <SidebarMenu>
-          <SidebarMenuItem>
-            <SidebarMenuButton
-              asChild
-              isActive={Boolean(matchRoute({ to: authItem.url }))}
-              tooltip={authItem.title}
-            >
-              <Link to={authItem.url} onClick={closeMobile}>
-                <authItem.icon />
-                <span>{authItem.title}</span>
-              </Link>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
-        </SidebarMenu>
+        <nav aria-label="계정">
+          <SidebarMenu>
+            <SidebarMenuItem>
+              <SidebarMenuButton asChild isActive={isAuthItemActive} tooltip={authItem.title}>
+                <Link
+                  to={authItem.url}
+                  onClick={closeMobile}
+                  aria-current={isAuthItemActive ? 'page' : undefined}
+                >
+                  <authItem.icon />
+                  <span>{authItem.title}</span>
+                </Link>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+          </SidebarMenu>
+        </nav>
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>
