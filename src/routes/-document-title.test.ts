@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { APP_NAME, pageTitle } from '@/shared/config/page-title'
+import { Route as notFoundRoute } from './$'
 import { Route as rootRoute } from './__root'
 import { Route as dashboardRoute } from './_app.index'
 import { Route as taskDetailRoute } from './_app.task.$id'
@@ -13,6 +14,7 @@ const routes = [
   { page: '할 일 상세', route: taskDetailRoute },
   { page: '회원정보', route: userRoute },
   { page: '로그인', route: signInRoute },
+  { page: '페이지를 찾을 수 없습니다.', route: notFoundRoute },
 ]
 
 function titleOf(route: { options: { head?: (ctx: never) => unknown } }) {
