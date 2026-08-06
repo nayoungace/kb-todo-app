@@ -10,8 +10,9 @@ pnpm dev          # 개발 서버 (MSW 목 서버 자동 기동)
 pnpm build        # 타입 체크 + 프로덕션 빌드
 pnpm preview      # 빌드 결과 미리보기 (여기서도 MSW 가 기동한다)
 pnpm test         # 단위/통합 테스트 (Vitest)
-pnpm lint         # oxlint + steiger(FSD 구조 검사)
+pnpm lint         # oxlint + steiger(FSD 구조 검사) + 목 마커 검사
 pnpm lint:fsd     # FSD 구조 검사만
+pnpm lint:markers # 목 계층의 "프로덕션과 다름" 주석이 컨벤션 문서의 표와 일치하는지 검사
 pnpm format       # prettier
 ```
 

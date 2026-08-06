@@ -3,6 +3,8 @@ import { SEED_ACCOUNT } from '../data/db'
 import { networkDelay } from '../lib/delay'
 import { createFakeJwt, decodeJwt, isExpired } from '../lib/jwt'
 
+//- 프로덕션과 다름. 401 → refresh → 재시도 경로를 검수자가 직접 관찰할 수 있도록 TTL을 30초로 줄였다.
+//  실제 환경이라면 수 분 단위다.
 export const ACCESS_TOKEN_TTL_SECONDS = 30
 const REFRESH_TOKEN_TTL_SECONDS = 60 * 60 * 24 * 7
 
@@ -23,6 +25,8 @@ function issueTokens() {
   }
 }
 
+//- 프로덕션과 다름. `Secure`는 http://localhost 에서 저장되지 않고, `HttpOnly`는 목이 심어도
+//  MSW 쿠키 저장소 특성상 의미가 없어 둘 다 뺐다. 실제 환경이라면 `HttpOnly; Secure`가 붙는다.
 function refreshCookie(refreshToken: string): string {
   return `token=${refreshToken}; Path=/; Max-Age=${REFRESH_TOKEN_TTL_SECONDS}; SameSite=Strict`
 }
