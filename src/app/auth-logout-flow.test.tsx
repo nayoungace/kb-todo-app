@@ -57,4 +57,26 @@ describe('회원정보 페이지의 로그아웃', () => {
     expect(document.cookie).not.toContain('token=')
     await waitFor(() => expect(queryClient.getQueryCache().getAll()).toHaveLength(0), FIND_TIMEOUT)
   })
+
+  it('로그아웃하면 refresh 쿠키가 서버에서도 무효화되어 세션을 되살릴 수 없다', async () => {
+    const signInResponse = await fetch(new URL('/api/sign-in', window.location.origin), {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: TEST_ACCOUNT.email, password: TEST_ACCOUNT.password }),
+    })
+    expect(signInResponse.status).toBe(200)
+
+    const user = userEvent.setup()
+    renderApp('/user')
+
+    await user.click(await screen.findByRole('button', { name: '로그아웃' }, FIND_TIMEOUT))
+    await screen.findByRole('heading', { level: 1, name: '로그인' }, FIND_TIMEOUT)
+
+    await waitFor(async () => {
+      const refreshResponse = await fetch(new URL('/api/refresh', window.location.origin), {
+        method: 'POST',
+      })
+      expect(refreshResponse.status).toBe(401)
+    }, FIND_TIMEOUT)
+  })
 })

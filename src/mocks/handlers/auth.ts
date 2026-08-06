@@ -45,6 +45,18 @@ export const authHandlers = [
     })
   }),
 
+  //- 프로덕션과 다름. 명세에 없는 목 전용 엔드포인트다. 실제 환경이라면 refresh 쿠키가 HttpOnly 라
+  //  클라이언트가 지울 수 없으므로 명세에 서버 무효화 엔드포인트가 있어야 하고, 목에서도 MSW 쿠키 저장소는
+  //  만료 Set-Cookie 응답으로만 정리된다(→ conventions §3.5).
+  http.post('/api/sign-out', async () => {
+    await networkDelay()
+
+    return new HttpResponse(null, {
+      status: 204,
+      headers: { 'Set-Cookie': 'token=; Path=/; Max-Age=0; SameSite=Strict' },
+    })
+  }),
+
   http.post('/api/refresh', async ({ cookies }) => {
     await networkDelay()
 
