@@ -26,5 +26,8 @@ export default defineConfig({
     environment: 'jsdom',
     setupFiles: ['./src/test/setup.ts'],
     css: false,
+    // 라우터와 MSW 를 함께 띄우는 통합 테스트는 단독 실행 시 2~3초면 끝나지만,
+    // 전체 스위트를 병렬로 돌리면 기본값 5초를 넘겨 간헐적으로 실패한다.
+    testTimeout: 15_000,
   },
 })
