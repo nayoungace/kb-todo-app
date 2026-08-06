@@ -57,7 +57,12 @@ export function TaskList({
 
   return (
     <div className="flex flex-col" style={{ gap: TASK_CARD_GAP }}>
-      <ul ref={listRef} className="relative" style={{ height: virtualizer.getTotalSize() }}>
+      <ul
+        ref={listRef}
+        role="list"
+        className="relative"
+        style={{ height: virtualizer.getTotalSize() }}
+      >
         {virtualItems.map((item) => {
           const task = tasks[item.index]
           if (!task) return null
@@ -66,6 +71,8 @@ export function TaskList({
               key={task.id}
               ref={virtualizer.measureElement}
               data-index={item.index}
+              aria-posinset={item.index + 1}
+              aria-setsize={hasNextPage ? -1 : tasks.length}
               className="absolute inset-x-0 top-0"
               style={{ transform: `translateY(${item.start - scrollMargin}px)` }}
             >
@@ -81,11 +88,13 @@ export function TaskList({
         })}
       </ul>
       {isFetchingNextPage && (
-        <div aria-busy="true">
+        <div role="status" aria-busy="true" aria-label="다음 할 일을 불러오는 중">
           <TaskCardSkeleton />
         </div>
       )}
-      {hasError && !isFetching && <ErrorState onRetry={onRetry} />}
+      {hasError && !isFetching && (
+        <ErrorState message="할 일을 더 불러오지 못했습니다." onRetry={onRetry} />
+      )}
     </div>
   )
 }

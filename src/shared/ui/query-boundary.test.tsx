@@ -60,13 +60,15 @@ describe('QueryBoundary', () => {
     expect(screen.queryByRole('button', { name: '다시 시도' })).not.toBeInTheDocument()
   })
 
-  it('실패 시 문구를 노출하지 않는다 — 문구는 공용 에러 모달이 책임진다', () => {
-    const { container } = render(
+  it('실패 사유는 보이는 문구가 아니라 스크린리더 전용 안내로만 낸다', () => {
+    render(
       <QueryBoundary query={createQuery({ isError: true })} skeleton={<div />}>
         {(data) => <p>{data}</p>}
       </QueryBoundary>,
     )
 
-    expect(container.textContent).toBe('다시 시도')
+    const alert = screen.getByRole('alert')
+    expect(alert).toHaveTextContent('요청을 처리하지 못했습니다.')
+    expect(screen.getByText('요청을 처리하지 못했습니다.')).toHaveClass('sr-only')
   })
 })
