@@ -57,7 +57,7 @@ export function SignInPage() {
                     id="email"
                     type="email"
                     autoComplete="email"
-                    placeholder="nayoungace@github.com"
+                    placeholder="test@foo.co.kr"
                     aria-invalid={Boolean(emailError)}
                     {...register('email')}
                   />

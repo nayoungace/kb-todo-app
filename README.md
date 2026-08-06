@@ -17,7 +17,7 @@ pnpm format       # prettier
 
 Node 20 이상, 패키지 매니저는 pnpm(`packageManager` 필드에 고정).
 
-로그인 계정은 `test@kb.co.kr` / `password123` 이다. 실제 백엔드가 없으므로 MSW 를 `dev` 뿐 아니라 **프로덕션 빌드에서도 기동**한다. `pnpm build && pnpm preview` 로 띄운 결과물에서도 모든 화면이 그대로 동작한다.
+로그인 계정은 `test@foo.co.kr` / `password123` 이다. 실제 백엔드가 없으므로 MSW 를 `dev` 뿐 아니라 **프로덕션 빌드에서도 기동**한다. `pnpm build && pnpm preview` 로 띄운 결과물에서도 모든 화면이 그대로 동작한다.
 
 ## 기술 선택
 
@@ -45,7 +45,7 @@ src/
 ├── features/     # 사용자 행위 단위 — 로그인(auth-sign-in), 할 일 삭제(task-delete)
 ├── entities/     # 도메인 모델과 Repository/Queries — session, task, user, dashboard
 ├── shared/       # 공용 UI(직접 만든 것은 shared/ui, shadcn 산출물은 shared/shadcn), 설정, 유틸
-│                 #   shared/api 에 httpClient·tokenStore·401 refresh
+│                 #   shared/api 에 httpClient, tokenStore, 401 refresh
 ├── mocks/        # MSW 핸들러 (브라우저/노드 공용)
 └── test/         # 테스트 셋업
 ```
@@ -71,7 +71,7 @@ import { ROUTES } from '@/shared/config/routes'
 import { StatCard } from '@/shared/ui/stat-card'
 ```
 
-단 하나의 예외가 `shared/api`다. `httpClient`·`tokenStore`·`refreshAccessToken`·`HttpError`는 "401을 만나면 refresh 후 재시도한다"는 하나의 파이프라인을 이루고 바깥에서는 그 조합만 쓰므로, 내부 파일 분할을 감추도록 세그먼트 단위 public API(`shared/api/index.ts`)를 둔다. shadcn 처럼 생성물이 계속 늘어나는 곳이 아니라 배럴 유지 비용도 없다.
+단 하나의 예외가 `shared/api`다. `httpClient`, `tokenStore`, `refreshAccessToken`, `HttpError`는 "401을 만나면 refresh 후 재시도한다"는 하나의 파이프라인을 이루고 바깥에서는 그 조합만 쓰므로, 내부 파일 분할을 감추도록 세그먼트 단위 public API(`shared/api/index.ts`)를 둔다. shadcn 처럼 생성물이 계속 늘어나는 곳이 아니라 배럴 유지 비용도 없다.
 
 ```ts
 import { httpClient, HttpError } from '@/shared/api'
@@ -105,9 +105,9 @@ UI 라이브러리 선택에서 가장 큰 비용은 종속이다. shadcn 은 np
 
 요구사항 관점에서는 세 가지가 근거가 된다.
 
-1. **접근성**: 로그인 실패 안내와 삭제 확인, 두 곳에서 모달이 필요하다. 포커스 트랩·복원, `aria-modal`, ESC/오버레이 닫기, 스크롤 락은 직접 구현 시 누락되기 쉬운데 Radix Dialog 기반이라 검증된 구현을 그대로 쓴다.
+1. **접근성**: 로그인 실패 안내와 삭제 확인, 두 곳에서 모달이 필요하다. 포커스 트랩과 복원, `aria-modal`, ESC/오버레이 닫기, 스크롤 락은 직접 구현 시 누락되기 쉬운데 Radix Dialog 기반이라 검증된 구현을 그대로 쓴다.
 2. **색상 토큰**: 요구사항이 색상의 토큰 관리를 명시한다. shadcn 은 CSS 변수로 토큰을 선언하고 Tailwind `@theme` 이 이를 유틸리티로 노출하므로, 별도 토큰 체계를 설계하지 않고도 조건을 만족한다.
-3. **시간 배분**: 요구사항이 심미성을 평가하지 않는다고 명시한 만큼, 시각 디자인보다 가상 스크롤·무한 스크롤·토큰 갱신 같은 로직에 시간을 쓰는 편이 낫다고 판단했다.
+3. **시간 배분**: 요구사항이 심미성을 평가하지 않는다고 명시한 만큼, 시각 디자인보다 가상 스크롤, 무한 스크롤, 토큰 갱신 같은 로직에 시간을 쓰는 편이 낫다고 판단했다.
 
 `baseColor` 는 `olive` 를 사용한다. 요구사항의 `primary: blue` 는 토큰화 방식을 설명하는 예시로 읽어, 특정 색상값을 강제하는 조건으로 보지 않았다.
 

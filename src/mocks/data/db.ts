@@ -6,16 +6,18 @@ export interface TaskRecord {
   registerDatetime: string
 }
 
+//- 프로덕션과 다름. 비밀번호를 평문으로 두고 그대로 비교한다. 실제 환경에서는 (서버가 붙으면) 해시를 비교해야 한다.
 export const SEED_ACCOUNT = {
   id: 1,
-  email: 'test@kb.co.kr',
+  email: 'test@foo.co.kr',
   password: 'password123',
-  name: '홍길동',
-  memo: 'KB TODO 과제용 계정입니다.',
+  name: '테스트',
+  memo: '과제용 테스트 계정입니다.',
 }
 
 const TASK_COUNT = 220
 const STORAGE_KEY = 'kb-todo-app:mock-tasks:v1'
+//- 프로덕션과 다름. 서버 DB 대신 sessionStorage 에 mock data 를 넣는다.
 const isPersistent = !import.meta.env.TEST && typeof sessionStorage !== 'undefined'
 
 function createSeedTasks(): TaskRecord[] {

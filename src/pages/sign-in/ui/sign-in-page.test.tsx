@@ -1,7 +1,7 @@
 import { screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { describe, expect, it } from 'vitest'
-import { renderWithProviders } from '@/test/test-utils'
+import { renderWithProviders, TEST_ACCOUNT } from '@/test/test-utils'
 import { SignInPage } from './sign-in-page'
 
 const INVALID_EMAIL_MESSAGE = 'email 형식이 올바르지 않습니다'
@@ -28,8 +28,8 @@ describe('SignInPage 유효성 표시', () => {
 
     expect(screen.getByRole('button', { name: '로그인' })).toBeDisabled()
 
-    await user.type(screen.getByLabelText('이메일'), 'nayoungace@github.com')
-    await user.type(screen.getByLabelText('비밀번호'), 'password1234')
+    await user.type(screen.getByLabelText('이메일'), TEST_ACCOUNT.email)
+    await user.type(screen.getByLabelText('비밀번호'), TEST_ACCOUNT.password)
 
     await waitFor(() => expect(screen.getByRole('button', { name: '로그인' })).toBeEnabled())
     expect(screen.queryByText(INVALID_EMAIL_MESSAGE)).not.toBeInTheDocument()
