@@ -7,6 +7,8 @@ function base64UrlEncode(value: unknown): string {
   return btoa(JSON.stringify(value)).replaceAll('+', '-').replaceAll('/', '_').replace(/=+$/, '')
 }
 
+//- 프로덕션과 다름. 서명 없이 디코딩만 가능한 가짜 JWT다(`alg: none` + 고정 문자열).
+//  실제 환경이라면 서버가 비밀키로 서명한다.
 export function createFakeJwt(payload: JwtPayload): string {
   const header = { alg: 'none', typ: 'JWT' }
   return `${base64UrlEncode(header)}.${base64UrlEncode(payload)}.mock-signature`

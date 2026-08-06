@@ -68,7 +68,6 @@ async function request<T>(path: string, options: RequestOptions = {}): Promise<T
 }
 
 export const httpClient = {
-  request,
   get<T>(path: string, options?: Omit<RequestOptions, 'method' | 'body'>): Promise<T> {
     return request<T>(path, { ...options, method: 'GET' })
   },

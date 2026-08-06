@@ -23,6 +23,9 @@ export function bootstrapSession(): Promise<void> {
   return bootstrapPromise
 }
 
+// 자의적 결정: 응답 본문의 refreshToken 은 저장하지 않는다. JS 로 영속화하면 XSS 노출면이
+// 넓어지므로, 서버가 Set-Cookie 로 심는 것을 전제한다 — 명세의 sign-in 응답에는 이 규정이
+// 없어 백엔드 계약 협의가 필요한 가정이다.
 export function establishSession(tokens: AuthTokenResponse): void {
   restored = true
   tokenStore.set(tokens.accessToken)

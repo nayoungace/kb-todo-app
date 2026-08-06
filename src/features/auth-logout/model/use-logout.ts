@@ -1,6 +1,6 @@
 import { useQueryClient } from '@tanstack/react-query'
 import { useNavigate } from '@tanstack/react-router'
-import { clearSession } from '@/entities/session'
+import { AuthRepository, clearSession } from '@/entities/session'
 import { ROUTES } from '@/shared/config/routes'
 
 export interface UseLogout {
@@ -13,6 +13,8 @@ export function useLogout(): UseLogout {
 
   return {
     logout: () => {
+      // 서버 무효화 실패가 로컬 로그아웃을 막지 않도록 결과를 기다리지 않는다
+      void AuthRepository.signOut().catch(() => undefined)
       clearSession()
       void navigate({ to: ROUTES.SIGN_IN }).then(() => {
         queryClient.clear()
