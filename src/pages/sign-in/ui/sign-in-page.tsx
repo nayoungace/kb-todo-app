@@ -59,9 +59,10 @@ export function SignInPage() {
                     autoComplete="email"
                     placeholder="test@foo.co.kr"
                     aria-invalid={Boolean(emailError)}
+                    aria-describedby={emailError ? 'email-error' : undefined}
                     {...register('email')}
                   />
-                  <FieldError errors={[emailError]} />
+                  <FieldError id="email-error" errors={[emailError]} />
                 </Field>
                 <Field data-invalid={Boolean(passwordError)}>
                   <FieldLabel htmlFor="password">비밀번호</FieldLabel>
@@ -69,10 +70,12 @@ export function SignInPage() {
                     id="password"
                     type="password"
                     autoComplete="current-password"
+                    placeholder="영문, 숫자 8~24자"
                     aria-invalid={Boolean(passwordError)}
+                    aria-describedby={passwordError ? 'password-error' : undefined}
                     {...register('password')}
                   />
-                  <FieldError errors={[passwordError]} />
+                  <FieldError id="password-error" errors={[passwordError]} />
                 </Field>
                 <Field>
                   <Button type="submit" disabled={!isValid || isPending}>

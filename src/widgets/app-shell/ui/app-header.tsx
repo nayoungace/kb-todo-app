@@ -1,10 +1,11 @@
-import { Link } from '@tanstack/react-router'
+import { Link, useMatchRoute } from '@tanstack/react-router'
 import { useSession } from '@/entities/session'
 import { getAuthNavItem, NAV_MAIN } from '@/shared/config/navigation'
 import { Button } from '@/shared/shadcn/ui/button'
 import { SidebarTrigger } from '@/shared/shadcn/ui/sidebar'
 
 export function AppHeader() {
+  const matchRoute = useMatchRoute()
   const { isAuthenticated } = useSession()
   const authItem = getAuthNavItem(isAuthenticated)
 
@@ -16,7 +17,12 @@ export function AppHeader() {
           {NAV_MAIN.map((item) => (
             <li key={item.title}>
               <Button variant="ghost" asChild>
-                <Link to={item.url}>
+                <Link
+                  to={item.url}
+                  aria-current={
+                    matchRoute({ to: item.url, fuzzy: item.fuzzy }) ? 'page' : undefined
+                  }
+                >
                   <item.icon />
                   {item.title}
                 </Link>
@@ -27,7 +33,10 @@ export function AppHeader() {
       </nav>
       <div className="ml-auto flex items-center gap-2">
         <Button variant="ghost" asChild>
-          <Link to={authItem.url}>
+          <Link
+            to={authItem.url}
+            aria-current={matchRoute({ to: authItem.url }) ? 'page' : undefined}
+          >
             <authItem.icon />
             {authItem.title}
           </Link>

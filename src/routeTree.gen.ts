@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as SplatRouteImport } from './routes/$'
 import { Route as AppRouteImport } from './routes/_app'
 import { Route as SignInRouteImport } from './routes/sign-in'
 import { Route as AppIndexRouteImport } from './routes/_app.index'
@@ -16,6 +17,11 @@ import { Route as AppUserRouteImport } from './routes/_app.user'
 import { Route as AppTaskIndexRouteImport } from './routes/_app.task.index'
 import { Route as AppTaskIdRouteImport } from './routes/_app.task.$id'
 
+const SplatRoute = SplatRouteImport.update({
+  id: '/$',
+  path: '/$',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AppRoute = AppRouteImport.update({
   id: '/_app',
   getParentRoute: () => rootRouteImport,
@@ -47,6 +53,7 @@ const AppTaskIdRoute = AppTaskIdRouteImport.update({
 } as any)
 
 export interface FileRoutesByFullPath {
+  '/$': typeof SplatRoute
   '/': typeof AppIndexRoute
   '/sign-in': typeof SignInRoute
   '/user': typeof AppUserRoute
@@ -54,6 +61,7 @@ export interface FileRoutesByFullPath {
   '/task/': typeof AppTaskIndexRoute
 }
 export interface FileRoutesByTo {
+  '/$': typeof SplatRoute
   '/sign-in': typeof SignInRoute
   '/user': typeof AppUserRoute
   '/': typeof AppIndexRoute
@@ -62,6 +70,7 @@ export interface FileRoutesByTo {
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
+  '/$': typeof SplatRoute
   '/_app': typeof AppRouteWithChildren
   '/sign-in': typeof SignInRoute
   '/_app/user': typeof AppUserRoute
@@ -71,11 +80,12 @@ export interface FileRoutesById {
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/sign-in' | '/user' | '/task/$id' | '/task/'
+  fullPaths: '/$' | '/' | '/sign-in' | '/user' | '/task/$id' | '/task/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/sign-in' | '/user' | '/' | '/task/$id' | '/task'
+  to: '/$' | '/sign-in' | '/user' | '/' | '/task/$id' | '/task'
   id:
     | '__root__'
+    | '/$'
     | '/_app'
     | '/sign-in'
     | '/_app/user'
@@ -85,12 +95,20 @@ export interface FileRouteTypes {
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
+  SplatRoute: typeof SplatRoute
   AppRoute: typeof AppRouteWithChildren
   SignInRoute: typeof SignInRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/$': {
+      id: '/$'
+      path: '/$'
+      fullPath: '/$'
+      preLoaderRoute: typeof SplatRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_app': {
       id: '/_app'
       path: ''
@@ -153,6 +171,7 @@ const AppRouteChildren: AppRouteChildren = {
 const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
 
 const rootRouteChildren: RootRouteChildren = {
+  SplatRoute: SplatRoute,
   AppRoute: AppRouteWithChildren,
   SignInRoute: SignInRoute,
 }

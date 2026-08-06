@@ -34,4 +34,18 @@ describe('SignInPage 유효성 표시', () => {
     await waitFor(() => expect(screen.getByRole('button', { name: '로그인' })).toBeEnabled())
     expect(screen.queryByText(INVALID_EMAIL_MESSAGE)).not.toBeInTheDocument()
   })
+
+  it('오류 문구는 입력의 설명으로 연결된다', async () => {
+    const user = userEvent.setup()
+    renderWithProviders(<SignInPage />)
+
+    expect(screen.getByLabelText('이메일')).not.toHaveAccessibleDescription()
+
+    await user.type(screen.getByLabelText('이메일'), 'not-an-email')
+    await user.tab()
+
+    await waitFor(() =>
+      expect(screen.getByLabelText('이메일')).toHaveAccessibleDescription(INVALID_EMAIL_MESSAGE),
+    )
+  })
 })

@@ -7,8 +7,9 @@ import { ROUTES } from '@/shared/config/routes'
 import { formatDateTime } from '@/shared/lib/date'
 import { Button } from '@/shared/shadcn/ui/button'
 import { Card, CardContent, CardFooter } from '@/shared/shadcn/ui/card'
-import { Item, ItemContent, ItemDescription, ItemMedia, ItemTitle } from '@/shared/shadcn/ui/item'
+import { Item, ItemContent, ItemMedia } from '@/shared/shadcn/ui/item'
 import { Skeleton } from '@/shared/shadcn/ui/skeleton'
+import { DetailField } from '@/shared/ui/detail-field'
 
 interface TaskDetailCardProps {
   id: string
@@ -44,35 +45,20 @@ export function TaskDetailCard({ id, task }: TaskDetailCardProps) {
         </>
       }
     >
-      <Item variant="outline">
-        <ItemMedia variant="icon">
-          <Heading />
-        </ItemMedia>
-        <ItemContent>
-          <ItemTitle>제목</ItemTitle>
-          <ItemDescription>{task.title}</ItemDescription>
-        </ItemContent>
-      </Item>
-      <Item variant="outline">
-        <ItemMedia variant="icon">
-          <NotebookPen />
-        </ItemMedia>
-        <ItemContent>
-          <ItemTitle>메모</ItemTitle>
-          <ItemDescription className="line-clamp-none whitespace-pre-wrap">
-            {task.memo}
-          </ItemDescription>
-        </ItemContent>
-      </Item>
-      <Item variant="outline">
-        <ItemMedia variant="icon">
-          <CalendarClock />
-        </ItemMedia>
-        <ItemContent>
-          <ItemTitle>등록일자</ItemTitle>
-          <ItemDescription>{formatDateTime(task.registerDatetime)}</ItemDescription>
-        </ItemContent>
-      </Item>
+      <DetailField name="task-title" label="제목" icon={<Heading />}>
+        {task.title}
+      </DetailField>
+      <DetailField
+        name="task-memo"
+        label="메모"
+        icon={<NotebookPen />}
+        descriptionClassName="line-clamp-none whitespace-pre-wrap"
+      >
+        {task.memo}
+      </DetailField>
+      <DetailField name="task-register-datetime" label="등록일자" icon={<CalendarClock />}>
+        {formatDateTime(task.registerDatetime)}
+      </DetailField>
     </TaskDetailCardShell>
   )
 }
