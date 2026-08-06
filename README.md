@@ -87,7 +87,7 @@ import { httpClient, HttpError } from '@/shared/api'
 | ------------------------------------------------ | --------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
 | `fsd/public-api`, `fsd/no-reserved-folder-names` | `src/shared/**` | 위 "예외 — `shared/`"                                                                                                                    |
 | `fsd/no-public-api-sidestep`                     | 전체            | `shared`에 배럴이 없으므로 파일 단위 진입이 정상 경로다                                                                                  |
-| `fsd/insignificant-slice`                        | 전체            | 화면 조립이 스텁이라 엔티티 참조가 아직 0건이고, `widgets`/`pages`는 코드젠 대상인 `src/routes`에서만 참조되어 참조 수가 세어지지 않는다 |
+| `fsd/insignificant-slice`                        | 전체            | `widgets`/`pages`는 코드젠 대상인 `src/routes`에서만 참조되어 참조 수가 세어지지 않는다                                                  |
 
 ### 데이터 레이어
 
