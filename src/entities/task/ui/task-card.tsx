@@ -1,12 +1,6 @@
 import { Check, Clock } from 'lucide-react'
 import { Badge } from '@/shared/shadcn/ui/badge'
-import {
-  Item,
-  ItemActions,
-  ItemContent,
-  ItemDescription,
-  ItemTitle,
-} from '@/shared/shadcn/ui/item'
+import { Item, ItemActions, ItemContent, ItemDescription, ItemTitle } from '@/shared/shadcn/ui/item'
 import { Skeleton } from '@/shared/shadcn/ui/skeleton'
 import type { TaskItem, TaskStatus } from '../model/types'
 
@@ -28,7 +22,7 @@ export function TaskCard({ task }: TaskCardProps) {
     <Item variant="outline" className="h-24 bg-card hover:bg-muted">
       <ItemContent>
         <ItemTitle>
-          <h3>{task.title}</h3>
+          <h2>{task.title}</h2>
         </ItemTitle>
         <ItemDescription>{task.memo}</ItemDescription>
       </ItemContent>
