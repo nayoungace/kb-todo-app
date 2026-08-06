@@ -2,6 +2,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useNavigate } from '@tanstack/react-router'
 import { dashboardQueries } from '@/entities/dashboard'
 import { TaskRepository, taskQueries } from '@/entities/task'
+import { HttpError } from '@/shared/api'
 import { ROUTES } from '@/shared/config/routes'
 
 export interface UseDeleteTask {
@@ -19,6 +20,13 @@ export function useDeleteTask(id: string, onSettled?: () => void): UseDeleteTask
       queryClient.removeQueries({ queryKey: taskQueries.list().queryKey })
       await navigate({ to: ROUTES.TASK })
       queryClient.removeQueries({ queryKey: taskQueries.detail(id).queryKey })
+      await queryClient.invalidateQueries({ queryKey: dashboardQueries.summary().queryKey })
+    },
+    onError: async (error) => {
+      if (!(error instanceof HttpError) || error.status !== 404) return
+
+      queryClient.removeQueries({ queryKey: taskQueries.list().queryKey })
+      await queryClient.resetQueries({ queryKey: taskQueries.detail(id).queryKey })
       await queryClient.invalidateQueries({ queryKey: dashboardQueries.summary().queryKey })
     },
     onSettled,

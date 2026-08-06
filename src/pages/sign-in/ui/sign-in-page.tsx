@@ -24,12 +24,15 @@ export function SignInPage() {
   const {
     register,
     handleSubmit,
-    formState: { errors, isValid },
+    formState: { errors, isValid, touchedFields },
   } = useForm<SignInFormValues>({
     resolver: zodResolver(signInSchema),
     mode: 'onChange',
     defaultValues: { email: '', password: '' },
   })
+
+  const emailError = touchedFields.email ? errors.email : undefined
+  const passwordError = touchedFields.password ? errors.password : undefined
 
   return (
     <main className="flex min-h-dvh items-center justify-center p-6">
@@ -48,28 +51,28 @@ export function SignInPage() {
                     KB TODO 계정으로 로그인하세요.
                   </p>
                 </div>
-                <Field data-invalid={Boolean(errors.email)}>
+                <Field data-invalid={Boolean(emailError)}>
                   <FieldLabel htmlFor="email">이메일</FieldLabel>
                   <Input
                     id="email"
                     type="email"
                     autoComplete="email"
                     placeholder="nayoungace@github.com"
-                    aria-invalid={Boolean(errors.email)}
+                    aria-invalid={Boolean(emailError)}
                     {...register('email')}
                   />
-                  <FieldError errors={[errors.email]} />
+                  <FieldError errors={[emailError]} />
                 </Field>
-                <Field data-invalid={Boolean(errors.password)}>
+                <Field data-invalid={Boolean(passwordError)}>
                   <FieldLabel htmlFor="password">비밀번호</FieldLabel>
                   <Input
                     id="password"
                     type="password"
                     autoComplete="current-password"
-                    aria-invalid={Boolean(errors.password)}
+                    aria-invalid={Boolean(passwordError)}
                     {...register('password')}
                   />
-                  <FieldError errors={[errors.password]} />
+                  <FieldError errors={[passwordError]} />
                 </Field>
                 <Field>
                   <Button type="submit" disabled={!isValid || isPending}>
