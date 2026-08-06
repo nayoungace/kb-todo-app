@@ -1,6 +1,6 @@
 # 프론트엔드 컨벤션
 
-접근성, 데이터 레이어, 목 서버, UI 상태 네 영역의 확정 규칙. 기준은 현재 `dev` 작업 트리의 코드다.
+접근성, 데이터 레이어, 목 서버, UI 상태 네 영역의 확정 규칙. 기준은 `main` 브랜치의 코드다.
 
 코드에는 설명 주석을 달지 않는다. 예외는 둘뿐이다.
 
@@ -174,7 +174,7 @@ export const taskQueries = {
 
 ## 3. 목 서버 컨벤션 (MSW)
 
-목 서버는 개발 보조가 아니라 **배포된 결과물의 백엔드**다. openapi 계약을 그대로 재현한다: bearer 검증, 만료 판정, 디코딩 가능한 JWT, `Set-Cookie` 기반 refresh 쿠키, 401/404 응답.
+목 서버는 **배포된 결과물의 백엔드**다(이 결정의 근거는 `README.md`의 "자의적 결정 / 가정" 표). openapi 계약을 그대로 재현한다: bearer 검증, 만료 판정, 디코딩 가능한 JWT, `Set-Cookie` 기반 refresh 쿠키, 401/404 응답.
 
 ### 3.1 기동
 
@@ -215,7 +215,7 @@ http.get('/api/task', async ({ request }) => {
 | `mocks/data/db.ts` | 비밀번호 평문 비교 | 해시 비교 |
 | `mocks/data/db.ts` | `sessionStorage`에 목 데이터 영속화 | 서버 DB |
 | `mocks/lib/delay.ts` | 인위적 네트워크 지연 삽입 | 실제 네트워크 지연 |
-| `mocks/handlers/auth.ts` | `POST /api/sign-out`은 명세에 없는 목 전용 엔드포인트 | 명세에 포함 — HttpOnly refresh 쿠키는 서버만 만료시킬 수 있다 |
+| `mocks/handlers/auth.ts` | `POST /api/sign-out`은 명세에 없는 목 전용 엔드포인트 (근거는 README의 "자의적 결정 / 가정" 표) | 명세에 포함 |
 
 **타협 지점에는 `//- 프로덕션과 다름.` 주석을 단다.** 무엇을 가정했는지와 실제라면 어떻게 되는지만 한두 줄로 적고, 긴 근거는 이 표에 둔다. 이 예외는 목 계층과 목 때문에 앱 코드가 타협한 자리에만 적용한다.
 
