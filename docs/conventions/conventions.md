@@ -2,7 +2,10 @@
 
 접근성, 데이터 레이어, 목 서버, UI 상태 네 영역의 확정 규칙. 기준은 현재 `dev` 작업 트리의 코드다.
 
-코드에는 설명 주석을 달지 않는다. 유일한 예외는 목 계층의 `//- 프로덕션과 다름.` 주석이다(→ [3.4절](#34-프로덕션과-다른-부분)).
+코드에는 설명 주석을 달지 않는다. 예외는 둘뿐이다.
+
+- 목 계층의 `//- 프로덕션과 다름.` 주석(→ [3.4절](#34-프로덕션과-다른-부분)).
+- **자의적 결정 주석** — 명세([요구사항 요약](../requirements/summary.md))가 비어 있거나 해석이 갈리는 자리에서 한쪽을 고른 근거. `// 자의적 결정:` 으로 시작하고, 무엇을 골랐는지와 왜 그렇게 읽었는지를 한두 줄로 적는다. 코드만 읽는 리뷰어가 결정과 실수를 구분할 수 있어야 하기 때문이며, 전체 목록은 `README.md`의 "자의적 결정 / 가정" 절에 모은다.
 
 전제 스택: React 19 + TypeScript, TanStack Router(파일 기반) / Query / Virtual, react-hook-form + zod(폼 전용), Tailwind 4 + shadcn/ui(소스 복사, Radix 기반), MSW 2, Vitest + Testing Library. 구조는 FSD(`app / routes / pages / widgets / features / entities / shared / mocks`)이고 steiger가 경계를 검사한다.
 

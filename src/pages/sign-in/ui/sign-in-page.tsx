@@ -8,6 +8,8 @@ import { Field, FieldError, FieldGroup, FieldLabel } from '@/shared/shadcn/ui/fi
 import { Input } from '@/shared/shadcn/ui/input'
 import { KbLogo } from '@/shared/ui/kb-logo'
 
+// 자의적 결정: 요구사항의 "영문, 숫자로 구성된"은 "둘 다 포함"으로도 읽히지만, 명세의
+// `pattern: ^[A-Za-z0-9]+$` 를 우선해 "영문·숫자 외 문자 불가"로 해석했다(영문만/숫자만도 통과).
 const signInSchema = z.object({
   email: z.email('email 형식이 올바르지 않습니다'),
   password: z

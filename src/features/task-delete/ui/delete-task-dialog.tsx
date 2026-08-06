@@ -26,6 +26,8 @@ export function DeleteTaskDialog({ id }: DeleteTaskDialogProps) {
   const [open, setOpen] = useState(false)
   const { deleteTask, isPending } = useDeleteTask(id, () => setOpen(false))
 
+  // 자의적 결정: id 를 화면에서 복사해 붙여넣는 경로를 고려해 앞뒤 공백은 관용한다.
+  // "동일한 값"의 엄격 해석은 아니지만, 확인 절차의 목적(의도적으로 id 를 입력했는가)은 유지된다.
   const schema = useMemo(
     () => z.object({ confirmId: z.string().refine((value) => value.trim() === id) }),
     [id],
